@@ -24,6 +24,9 @@ export function loadSessionSettings() {
     if (vehicleConfig?.batteryLevel === '82') {
       vehicleConfig.batteryLevel = '';
     }
+    if (vehicleConfig?.efficiency === '5.5') {
+      vehicleConfig.efficiency = '';
+    }
 
     const routeForm = parsed.routeForm && typeof parsed.routeForm === 'object' ? parsed.routeForm : null;
     if (routeForm?.fuel_price_per_liter === '23.5') {

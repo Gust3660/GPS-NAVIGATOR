@@ -262,7 +262,7 @@ export default function App() {
     }
 
     if (key === 'efficiency') {
-      const kmPerLiter = Math.max(Number(value) || 1, 1);
+      const kmPerLiter = Math.max(Number(value || 5.5) || 1, 1);
       const nextForm = { ...routeForm, vehicle_consumption: String(100 / kmPerLiter) };
       setRouteForm(nextForm);
       if (hasRouteEndpoints(nextForm)) {

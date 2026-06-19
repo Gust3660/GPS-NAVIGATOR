@@ -1,5 +1,5 @@
 export const defaultVehicleConfig = {
-  efficiency: '5.5',
+  efficiency: '',
   batteryLevel: '',
   vehicle: 'Auto',
   fuel: 'Gasolina',

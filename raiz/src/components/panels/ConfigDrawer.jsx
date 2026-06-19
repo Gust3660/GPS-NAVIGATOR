@@ -44,7 +44,7 @@ export default function ConfigDrawer({
             <label key={label} className="grid grid-cols-[24px_1fr_90px_44px] items-center gap-2">
               <Icon size={19} className="text-emerald-500 dark:text-yellow-400" />
               <span>{label}</span>
-              <input className={inputClass} value={value} readOnly />
+              <input className={inputClass} placeholder={value} value="" readOnly />
               <small className="text-slate-500">km/L</small>
             </label>
           ))}
@@ -90,8 +90,10 @@ export default function ConfigDrawer({
           <>
             <label className="grid gap-2">
               <span className={labelTextClass}>Rendimiento actual</span>
-              <input className={inputClass} value={vehicleConfig.efficiency} onChange={(event) => onVehicleConfigChange('efficiency', event.target.value)} />
-              <small className="text-slate-500">km/L</small>
+              <span className="relative">
+                <input className={cx(inputClass, 'w-full pr-14')} type="number" min="0" step="0.1" placeholder="5.5" value={vehicleConfig.efficiency ?? ''} onChange={(event) => onVehicleConfigChange('efficiency', event.target.value)} />
+                <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-500 dark:text-slate-400">km/L</span>
+              </span>
             </label>
             <label className="grid gap-2">
               <span className={labelTextClass}>Tipo de combustible</span>
