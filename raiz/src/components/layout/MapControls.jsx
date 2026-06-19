@@ -92,7 +92,7 @@ export default function MapControls({
   return (
     <div className="fixed right-4 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-3">
       <MapControlButton
-        className={cx(redZonesOpen && 'bg-red-500 text-white ring-2 ring-red-200/80 dark:bg-red-500 dark:text-white dark:ring-red-300/40')}
+        className={cx(redZonesOpen && 'bg-violet-700 text-white ring-2 ring-violet-300/80 hover:bg-violet-800 hover:text-white dark:bg-violet-600 dark:text-white dark:ring-violet-300/50 dark:hover:bg-violet-700')}
         label="Administrar zonas rojas"
         title={redZonesOpen ? 'Cerrar zonas rojas' : 'Añadir o editar zonas rojas'}
         onClick={onOpenRedZones}
