@@ -11,6 +11,7 @@ from shapely.geometry import LineString, Point, Polygon
 
 EARTH_RADIUS_M = 6_371_000
 OSRM_BASE_URL = "https://router.project-osrm.org/route/v1/driving"
+RED_ZONE_SAFETY_RADIUS_M = 5_000
 
 LOCAL_PLACES = {
     "ciudad de mexico": (19.432608, -99.133209, "Ciudad de Mexico"),
@@ -65,6 +66,34 @@ def polyline_to_coords(polyline_str):
 def coords_to_polyline(coords):
     points = [(lat, lng) for lng, lat in coords]
     return polyline.encode(points)
+
+
+def red_zone_polygon(zone, include_safety_radius=True):
+    polygon_points = zone["polygon"]
+    polygon = Polygon(polygon_points)
+    if not include_safety_radius:
+        return polygon
+
+    center = polygon.centroid
+    lat = center.y
+    meters_per_degree_lat = 111_320
+    meters_per_degree_lng = max(111_320 * math.cos(math.radians(lat)), 1)
+    projected = Polygon([
+        (
+            (lng - center.x) * meters_per_degree_lng,
+            (point_lat - center.y) * meters_per_degree_lat,
+        )
+        for lng, point_lat in polygon_points
+    ])
+    safety_radius_m = float(zone.get("safety_radius_km", 5)) * 1000
+    buffered = projected.buffer(safety_radius_m or RED_ZONE_SAFETY_RADIUS_M)
+    return Polygon([
+        (
+            center.x + x / meters_per_degree_lng,
+            center.y + y / meters_per_degree_lat,
+        )
+        for x, y in buffered.exterior.coords
+    ])
 
 
 def osrm_excluded_classes(avoid_tolls=False, avoid_highways=False):
@@ -148,7 +177,7 @@ def route_intersects_red_zone(route_points_lnglat, red_zones, exempt_points=None
     line = LineString(route_points_lnglat)
     for zone in red_zones:
         try:
-            polygon = Polygon(zone["polygon"])
+            polygon = red_zone_polygon(zone)
             if any(polygon.contains(Point(lng, lat)) for lat, lng in exempt_points):
                 continue
             if line.intersects(polygon):
@@ -160,7 +189,7 @@ def route_intersects_red_zone(route_points_lnglat, red_zones, exempt_points=None
 
 def point_inside_red_zone(lat, lng, red_zones):
     point = Point(lng, lat)
-    return any(Polygon(zone["polygon"]).contains(point) for zone in red_zones)
+    return any(red_zone_polygon(zone).contains(point) for zone in red_zones)
 
 
 def interpolate_segment(start, end, max_step_m=250):
@@ -193,7 +222,7 @@ def segment_intersects_red_zone(start, end, red_zones, exempt_points=None):
     exempt_points = exempt_points or []
     line = LineString([[start[1], start[0]], [end[1], end[0]]])
     for zone in red_zones:
-        polygon = Polygon(zone["polygon"])
+        polygon = red_zone_polygon(zone)
         if any(polygon.contains(Point(lng, lat)) for lat, lng in exempt_points):
             continue
         if line.intersects(polygon):
@@ -202,9 +231,8 @@ def segment_intersects_red_zone(start, end, red_zones, exempt_points=None):
 
 
 def zone_bbox(zone):
-    lngs = [point[0] for point in zone["polygon"]]
-    lats = [point[1] for point in zone["polygon"]]
-    return min(lats), max(lats), min(lngs), max(lngs)
+    min_lng, min_lat, max_lng, max_lat = red_zone_polygon(zone).bounds
+    return min_lat, max_lat, min_lng, max_lng
 
 
 def nearby_red_zones_for_segment(start, end, red_zones, padding=0.12):
@@ -267,7 +295,7 @@ def orthogonal_connector(start, end, red_zones=None):
     return best[1]
 
 
-def grid_bounds(start, end, red_zones, padding=0.018):
+def grid_bounds(start, end, red_zones, padding=0.065):
     lats = [start[0], end[0]]
     lngs = [start[1], end[1]]
     for zone in red_zones or []:
@@ -404,7 +432,7 @@ def intersecting_red_zones(route_points_lnglat, red_zones, exempt_points=None):
     hits = []
     for zone in red_zones:
         try:
-            polygon = Polygon(zone["polygon"])
+            polygon = red_zone_polygon(zone)
             if any(polygon.contains(Point(lng, lat)) for lat, lng in exempt_points):
                 continue
             if line.intersects(polygon):

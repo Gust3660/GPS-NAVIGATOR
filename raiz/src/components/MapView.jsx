@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from 'react';
-import { CircleMarker, MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet';
+import React, { useEffect, useMemo } from 'react';
+import { Circle, CircleMarker, MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet';
 import { useMap } from 'react-leaflet/hooks';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -265,25 +265,39 @@ export default function MapView({
           if (!zoneCenter) return null;
 
           return (
-            <CircleMarker
-              key={zone.name}
-              center={zoneCenter}
-              radius={7}
-              pathOptions={{
-                color: '#991b1b',
-                fillColor: '#ef4444',
-                fillOpacity: 0.95,
-                opacity: 0.95,
-                weight: 2
-              }}
-            >
-              <Popup>
-                <strong>{zone.name}</strong>
-                {zone.incidents && <p>{zone.incidents} reportes filtrados 2024</p>}
-                {zone.risk_level && <p>Riesgo: {zone.risk_level}</p>}
-                {zone.source && <small>{zone.source}</small>}
-              </Popup>
-            </CircleMarker>
+            <React.Fragment key={zone.id || zone.name}>
+              <Circle
+                center={zoneCenter}
+                radius={Number(zone.safety_radius_km || 5) * 1000}
+                pathOptions={{
+                  color: '#dc2626',
+                  fillColor: '#ef4444',
+                  fillOpacity: 0.08,
+                  opacity: 0.6,
+                  weight: 2,
+                  dashArray: '8 8'
+                }}
+              />
+              <CircleMarker
+                center={zoneCenter}
+                radius={7}
+                pathOptions={{
+                  color: '#991b1b',
+                  fillColor: '#ef4444',
+                  fillOpacity: 0.95,
+                  opacity: 0.95,
+                  weight: 2
+                }}
+              >
+                <Popup>
+                  <strong>{zone.name}</strong>
+                  <p>Perímetro de evasión: {zone.safety_radius_km || 5} km</p>
+                  {zone.incidents && <p>{zone.incidents} reportes filtrados 2024</p>}
+                  {zone.risk_level && <p>Riesgo: {zone.risk_level}</p>}
+                  {zone.source && <small>{zone.source}</small>}
+                </Popup>
+              </CircleMarker>
+            </React.Fragment>
           );
         })}
         {origin && !(navigationActive && vehiclePosition) && (

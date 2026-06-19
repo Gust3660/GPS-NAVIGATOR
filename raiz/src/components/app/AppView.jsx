@@ -47,6 +47,7 @@ export default function AppView({
   leaveNow,
   locatingOrigin,
   mapLayer,
+  mapInstance,
   navigationActive,
   navigationArrival,
   navigationDetailsOpen,
@@ -66,6 +67,10 @@ export default function AppView({
   recenterNavigation,
   redZoneCount,
   redZones,
+  redZonesOpen,
+  redZoneSaving,
+  saveRedZone,
+  removeRedZone,
   refreshRecentRoutes,
   refreshRoute,
   remainingMeters,
@@ -97,6 +102,7 @@ export default function AppView({
   setOriginSuggestions,
   setRecentsOpen,
   setRouteOptionsOpen,
+  setRedZonesOpen,
   setSearchOpen,
   setStepsOpen,
   setSummaryOpen,
@@ -152,7 +158,7 @@ export default function AppView({
         currentTime={currentTime}
         navigationActive={navigationActive}
         routeResult={routeResult}
-        redZones={routeResult?.red_zones ?? redZones}
+        redZones={redZones}
         origin={origin}
         destination={destination}
         stops={Array.isArray(routeForm.stops) ? routeForm.stops : []}
@@ -232,7 +238,8 @@ export default function AppView({
           onToggleLayer: toggleMapLayer,
           onLocateOrigin: locateOrigin,
           onToggleCompass: handleToggleCompass,
-          onZoom: zoomMap
+          onZoom: zoomMap,
+          onOpenRedZones: () => setRedZonesOpen(true)
         }}
         summaryOpen={summaryOpen}
         summaryProps={{
@@ -328,6 +335,15 @@ export default function AppView({
           isElectricVehicle,
           onClose: () => setRouteOptionsOpen(false),
           onUpdateRouteOption: updateRouteOption
+        }}
+        redZonesOpen={redZonesOpen}
+        redZonesProps={{
+          zones: redZones,
+          mapInstance,
+          saving: redZoneSaving,
+          onClose: () => setRedZonesOpen(false),
+          onSave: saveRedZone,
+          onDelete: removeRedZone
         }}
         tollDetailOpen={tollDetailOpen}
         tollDetailProps={{

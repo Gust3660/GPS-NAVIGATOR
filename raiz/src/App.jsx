@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import AppView from './components/app/AppView.jsx';
 import { initialRoute } from './data/routeData.js';
 import { defaultVehicleConfig } from './data/defaultVehicleConfig.js';
-import { saveSavedRoute } from './services/api.js';
+import { createRedZone, deleteRedZone, saveSavedRoute, updateRedZone } from './services/api.js';
 import { useWebSocket } from './hooks/useWebSocket.js';
 import { useDeviceClock } from './hooks/useDeviceClock.js';
 import { useCompassHeading } from './hooks/useCompassHeading.js';
@@ -77,6 +77,8 @@ export default function App() {
   const [activeNav, setActiveNav] = useState(null);
   const [alerts, setAlerts] = useState([]);
   const [redZones, setRedZones] = useState([]);
+  const [redZonesOpen, setRedZonesOpen] = useState(false);
+  const [redZoneSaving, setRedZoneSaving] = useState(false);
   const [mapInstance, setMapInstance] = useState(null);
   const [locatingOrigin, setLocatingOrigin] = useState(false);
   const [vehicleConfig, setVehicleConfig] = useState({ ...defaultVehicleConfig, ...savedSession.vehicleConfig });
@@ -296,6 +298,48 @@ export default function App() {
     }
   };
 
+  const saveRedZone = async (zone) => {
+    if (!zone.name || !Number.isFinite(zone.lat) || !Number.isFinite(zone.lng)) {
+      notifyError('Completa un nombre y coordenadas validas', 'red-zone-invalid');
+      return false;
+    }
+
+    setRedZoneSaving(true);
+    try {
+      const zones = zone.id
+        ? await updateRedZone(zone.id, zone)
+        : await createRedZone(zone);
+      setRedZones(zones);
+      if (hasRouteEndpoints(routeForm)) {
+        await refreshRoute(routeForm, true, false);
+      }
+      notifySuccess(zone.id ? 'Zona roja actualizada' : 'Zona roja agregada', 'red-zone-saved');
+      return true;
+    } catch (error) {
+      notifyError(error.message || 'No se pudo guardar la zona roja', 'red-zone-save-error');
+      return false;
+    } finally {
+      setRedZoneSaving(false);
+    }
+  };
+
+  const removeRedZone = async (zone) => {
+    if (!window.confirm(`¿Eliminar la zona roja "${zone.name}"?`)) return;
+    setRedZoneSaving(true);
+    try {
+      const zones = await deleteRedZone(zone.id);
+      setRedZones(zones);
+      if (hasRouteEndpoints(routeForm)) {
+        await refreshRoute(routeForm, true, false);
+      }
+      notifySuccess('Zona roja eliminada', 'red-zone-deleted');
+    } catch (error) {
+      notifyError(error.message || 'No se pudo eliminar la zona roja', 'red-zone-delete-error');
+    } finally {
+      setRedZoneSaving(false);
+    }
+  };
+
   const refreshRouteFromCurrentLocation = async ({ silent = false, remember = false, zoom = 15 } = {}) => {
     if (!hasDestination(routeForm)) {
       throw new Error('Selecciona un destino antes de calcular la salida real');
@@ -333,6 +377,7 @@ export default function App() {
       setRecentsOpen(false);
       setStepsOpen(false);
       setRouteOptionsOpen(false);
+      setRedZonesOpen(false);
       setTollDetailOpen(false);
       setWeatherOpen(false);
       setSummaryOpen(true);
@@ -511,6 +556,7 @@ export default function App() {
     setRecentsOpen(false);
     setStepsOpen(false);
     setRouteOptionsOpen(false);
+    setRedZonesOpen(false);
     setTollDetailOpen(false);
     setWeatherOpen(false);
     setSummaryOpen(label === 'Navegar');
@@ -572,6 +618,7 @@ export default function App() {
       leaveNow={leaveNow}
       locatingOrigin={locatingOrigin}
       mapLayer={mapLayer}
+      mapInstance={mapInstance}
       navigationActive={navigationActive}
       navigationArrival={navigationArrival}
       navigationDetailsOpen={navigationDetailsOpen}
@@ -591,6 +638,10 @@ export default function App() {
       recenterNavigation={recenterNavigation}
       redZoneCount={redZoneCount}
       redZones={redZones}
+      redZonesOpen={redZonesOpen}
+      redZoneSaving={redZoneSaving}
+      saveRedZone={saveRedZone}
+      removeRedZone={removeRedZone}
       refreshRecentRoutes={refreshRecentRoutes}
       refreshRoute={refreshRoute}
       remainingMeters={remainingMeters}
@@ -621,6 +672,7 @@ export default function App() {
       setRecentRoutes={setRecentRoutes}
       setRecentsOpen={setRecentsOpen}
       setRouteOptionsOpen={setRouteOptionsOpen}
+      setRedZonesOpen={setRedZonesOpen}
       setSearchOpen={setSearchOpen}
       setStepsOpen={setStepsOpen}
       setStopQuery={setStopQuery}

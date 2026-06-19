@@ -90,6 +90,31 @@ export async function fetchRedZones() {
   return data.zones ?? [];
 }
 
+export async function createRedZone(zone) {
+  const data = await requestJson('/red-zones', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(zone)
+  });
+  return data.zones ?? [];
+}
+
+export async function updateRedZone(zoneId, zone) {
+  const data = await requestJson(`/red-zones/${zoneId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(zone)
+  });
+  return data.zones ?? [];
+}
+
+export async function deleteRedZone(zoneId) {
+  const data = await requestJson(`/red-zones/${zoneId}`, {
+    method: 'DELETE'
+  });
+  return data.zones ?? [];
+}
+
 export async function sendTelemetry(payload) {
   const response = await fetch(apiUrl('/telemetry'), {
     method: 'POST',

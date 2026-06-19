@@ -3,6 +3,7 @@ import NavigationHud from '../navigation/NavigationHud.jsx';
 import ConfigDrawer from '../panels/ConfigDrawer.jsx';
 import RouteListDrawer from '../panels/RouteListDrawer.jsx';
 import RouteOptionsDrawer from '../panels/RouteOptionsDrawer.jsx';
+import RedZonesDrawer from '../panels/RedZonesDrawer.jsx';
 import SearchPanel from '../panels/SearchPanel.jsx';
 import StepsDrawer from '../panels/StepsDrawer.jsx';
 import TollDetailDrawer from '../panels/TollDetailDrawer.jsx';
@@ -21,6 +22,8 @@ export default function AppOverlays({
   recentsProps,
   routeOptionsOpen,
   routeOptionsProps,
+  redZonesOpen,
+  redZonesProps,
   tollDetailOpen,
   tollDetailProps,
   weatherOpen,
@@ -61,6 +64,8 @@ export default function AppOverlays({
       )}
 
       {routeOptionsOpen && <RouteOptionsDrawer {...routeOptionsProps} />}
+
+      {redZonesOpen && <RedZonesDrawer {...redZonesProps} />}
 
       {tollDetailOpen && <TollDetailDrawer {...tollDetailProps} />}
 

@@ -45,6 +45,19 @@ def init_db():
             ON routes(kind, updated_at DESC)
             """
         )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS custom_red_zones (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                lat REAL NOT NULL,
+                lng REAL NOT NULL,
+                risk_level TEXT NOT NULL DEFAULT 'alto',
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
 
 
 def _route_from_row(row: sqlite3.Row) -> dict[str, Any]:
@@ -159,3 +172,65 @@ def save_route(kind: str, route: dict[str, Any], limit: int = 20) -> dict[str, A
         ).fetchone()
 
     return _route_from_row(row)
+
+
+def _custom_red_zone_from_row(row: sqlite3.Row) -> dict[str, Any]:
+    return {
+        "id": row["id"],
+        "name": row["name"],
+        "lat": row["lat"],
+        "lng": row["lng"],
+        "risk_level": row["risk_level"],
+    }
+
+
+def list_custom_red_zones() -> list[dict[str, Any]]:
+    with _connect() as connection:
+        rows = connection.execute(
+            "SELECT * FROM custom_red_zones ORDER BY updated_at DESC, id DESC"
+        ).fetchall()
+    return [_custom_red_zone_from_row(row) for row in rows]
+
+
+def create_custom_red_zone(zone: dict[str, Any]) -> dict[str, Any]:
+    with _connect() as connection:
+        cursor = connection.execute(
+            """
+            INSERT INTO custom_red_zones (name, lat, lng, risk_level)
+            VALUES (?, ?, ?, ?)
+            """,
+            (zone["name"], zone["lat"], zone["lng"], zone["risk_level"]),
+        )
+        row = connection.execute(
+            "SELECT * FROM custom_red_zones WHERE id = ?",
+            (cursor.lastrowid,),
+        ).fetchone()
+    return _custom_red_zone_from_row(row)
+
+
+def update_custom_red_zone(zone_id: int, zone: dict[str, Any]) -> dict[str, Any] | None:
+    with _connect() as connection:
+        cursor = connection.execute(
+            """
+            UPDATE custom_red_zones
+            SET name = ?, lat = ?, lng = ?, risk_level = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+            """,
+            (zone["name"], zone["lat"], zone["lng"], zone["risk_level"], zone_id),
+        )
+        if cursor.rowcount == 0:
+            return None
+        row = connection.execute(
+            "SELECT * FROM custom_red_zones WHERE id = ?",
+            (zone_id,),
+        ).fetchone()
+    return _custom_red_zone_from_row(row)
+
+
+def delete_custom_red_zone(zone_id: int) -> bool:
+    with _connect() as connection:
+        cursor = connection.execute(
+            "DELETE FROM custom_red_zones WHERE id = ?",
+            (zone_id,),
+        )
+    return cursor.rowcount > 0

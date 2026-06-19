@@ -1,4 +1,4 @@
-import { Layers, LocateFixed, Minus, Plus } from 'lucide-react';
+import { Layers, LocateFixed, Minus, Plus, ShieldPlus } from 'lucide-react';
 import { cx, iconButtonClass } from '../ui/classes.js';
 
 function MapControlButton({ children, className, label, title = label, ...props }) {
@@ -80,6 +80,7 @@ export default function MapControls({
   compassActive,
   compassAvailable,
   compassHeading,
+  onOpenRedZones,
   onToggleLayer,
   onLocateOrigin,
   onToggleCompass,
@@ -89,6 +90,13 @@ export default function MapControls({
 
   return (
     <div className="fixed right-4 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-3">
+      <MapControlButton
+        label="Administrar zonas rojas"
+        title="Añadir o editar zonas rojas"
+        onClick={onOpenRedZones}
+      >
+        <ShieldPlus size={25} />
+      </MapControlButton>
       <MapControlButton
         className={cx(mapLayer === 'satellite' && 'bg-yellow-300/90 text-slate-950 ring-yellow-200/80 dark:bg-yellow-300/90 dark:text-slate-950 dark:ring-yellow-200/40')}
         onClick={onToggleLayer}

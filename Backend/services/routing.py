@@ -1,6 +1,6 @@
 from typing import Any
 
-from core.red_zones import RED_ZONE_DATA, RED_ZONES
+from core.red_zones import RED_ZONE_DATA, get_red_zones
 from google_context import get_google_traffic_context
 from inegi_routing import route_with_inegi, sakbe_vehicle_code
 from route_logic import (
@@ -21,13 +21,13 @@ def apply_traffic_context(duration: float, traffic_context: dict[str, Any]):
     }
 
 
-def inegi_result_to_route(origin, destination, stops, inegi_result, traffic_context):
+def inegi_result_to_route(origin, destination, stops, inegi_result, traffic_context, red_zones):
     exempt_points = [origin, *stops, destination]
     unresolved = [
         zone["name"]
         for zone in intersecting_red_zones(
             inegi_result["coords"],
-            RED_ZONES,
+            red_zones,
             exempt_points=exempt_points,
         )
     ]
@@ -124,12 +124,13 @@ def calculate_route_response(req: RouteRequest):
     origin = (req.origin_lat, req.origin_lng)
     destination = (req.dest_lat, req.dest_lng)
     stops = [(stop.lat, stop.lng) for stop in req.stops]
+    red_zones = get_red_zones()
     traffic_context = get_google_traffic_context(origin, destination)
     if not req.avoid_tolls and not req.avoid_highways:
         result = calculate_local_route(
             origin,
             destination,
-            RED_ZONES,
+            red_zones,
             stops=stops,
             avoid_tolls=req.avoid_tolls,
             avoid_highways=req.avoid_highways,
@@ -140,7 +141,7 @@ def calculate_route_response(req: RouteRequest):
             result = calculate_road_network_route(
                 origin,
                 destination,
-                RED_ZONES,
+                red_zones,
                 stops=stops,
                 avoid_tolls=req.avoid_tolls,
                 avoid_highways=req.avoid_highways,
@@ -156,7 +157,7 @@ def calculate_route_response(req: RouteRequest):
                     avoid_highways=req.avoid_highways,
                     vehicle_type=req.vehicle_type,
                 )
-                result = inegi_result_to_route(origin, destination, stops, inegi_result, traffic_context)
+                result = inegi_result_to_route(origin, destination, stops, inegi_result, traffic_context, red_zones)
                 result["fallback_reason"] = f"OSRM no disponible: {osrm_exc}"
             except Exception as inegi_exc:
                 return {
@@ -228,10 +229,10 @@ def calculate_route_response(req: RouteRequest):
         "engine": result.get("route_model", "astar_manhattan_grid"),
         "optimization": result.get("optimization"),
         "google_warning": traffic_context.get("warning"),
-        "red_zones": RED_ZONES,
+        "red_zones": red_zones,
         "red_zone_source": RED_ZONE_DATA.get("source"),
         "map_layers": {
-            "red_zones": RED_ZONES,
+            "red_zones": red_zones,
             "traffic": {
                 "level": result.get("optimization", {}).get("traffic_level", "normal"),
                 "source": result.get("optimization", {}).get("traffic_source", "local_model"),

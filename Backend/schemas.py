@@ -36,6 +36,13 @@ class GeocodeQuery(BaseModel):
     query: str
 
 
+class RedZoneInput(BaseModel):
+    name: str = Field(min_length=2, max_length=120)
+    lat: float = Field(ge=-90, le=90)
+    lng: float = Field(ge=-180, le=180)
+    risk_level: str = Field(default="alto", min_length=2, max_length=40)
+
+
 class StoredRoute(BaseModel):
     name: str
     originName: Optional[str] = "Punto de partida"
