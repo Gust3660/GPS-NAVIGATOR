@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { MapPin, Plus, Save, ShieldAlert, Trash2, X } from 'lucide-react';
+import { AlertTriangle, MapPin, Plus, Save, ShieldAlert, Trash2, X } from 'lucide-react';
 import {
   cx,
   drawerClass,
@@ -70,22 +70,37 @@ export default function RedZonesDrawer({
 
   return (
     <section className={drawerClass} aria-label="Administrar zonas rojas">
-      <div className={drawerHeadClass}>
-        <button type="button" className={drawerCloseClass} onClick={onClose} aria-label="Cerrar zonas rojas">
+      <div className={cx(drawerHeadClass, 'items-start')}>
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-red-500/10 text-red-500">
+            <ShieldAlert size={21} />
+          </span>
+          <div className="min-w-0 pt-0.5">
+            <strong className="block text-lg leading-tight">Zonas rojas</strong>
+            <small className="mt-1 block leading-relaxed text-slate-500">
+              A* mantiene 5 km de distancia alrededor de cada zona.
+            </small>
+          </div>
+        </div>
+        <button
+          type="button"
+          className={cx(drawerCloseClass, 'ml-auto shrink-0')}
+          onClick={onClose}
+          aria-label="Cerrar zonas rojas"
+        >
           <X size={20} />
         </button>
-        <div>
-          <strong className="block">Zonas rojas</strong>
-          <small className="text-slate-500">A* mantiene 5 km de distancia alrededor de cada zona.</small>
-        </div>
       </div>
 
       <form className="grid gap-4" onSubmit={submit}>
-        <div className={cx(panelCardClass, 'grid gap-3')}>
+        <div className={cx(panelCardClass, 'grid gap-4 overflow-hidden')}>
           <div className="flex items-center justify-between gap-3">
-            <strong>{form.id ? 'Editar zona' : 'Nueva zona'}</strong>
+            <div>
+              <strong className="block">{form.id ? 'Editar zona' : 'Nueva zona'}</strong>
+              <small className="mt-0.5 block text-slate-500">Define el punto y su nivel de riesgo.</small>
+            </div>
             {form.id && (
-              <button type="button" className="text-xs font-black text-emerald-600" onClick={() => setForm(emptyForm)}>
+              <button type="button" className="shrink-0 text-xs font-black text-emerald-600" onClick={() => setForm(emptyForm)}>
                 <Plus className="inline" size={15} /> Nueva
               </button>
             )}
@@ -103,8 +118,8 @@ export default function RedZonesDrawer({
             />
           </label>
 
-          <div className="grid grid-cols-2 gap-3">
-            <label className="grid gap-2">
+          <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+            <label className="grid min-w-0 gap-2">
               <span className={labelTextClass}>Latitud</span>
               <input
                 required
@@ -117,7 +132,7 @@ export default function RedZonesDrawer({
                 onChange={(event) => setForm((current) => ({ ...current, lat: event.target.value }))}
               />
             </label>
-            <label className="grid gap-2">
+            <label className="grid min-w-0 gap-2">
               <span className={labelTextClass}>Longitud</span>
               <input
                 required
@@ -160,10 +175,15 @@ export default function RedZonesDrawer({
         </div>
       </form>
 
-      <div className="mt-4 grid gap-3">
-        <div className="flex items-center gap-2">
-          <ShieldAlert size={18} className="text-red-500" />
-          <strong>Zonas creadas ({editableZones.length})</strong>
+      <div className="mt-5 grid gap-3">
+        <div className="flex items-center justify-between gap-3 px-1">
+          <div className="flex items-center gap-2">
+            <ShieldAlert size={18} className="text-red-500" />
+            <strong>Zonas creadas</strong>
+          </div>
+          <span className="rounded-full bg-red-500/10 px-2.5 py-1 text-xs font-black text-red-500">
+            {editableZones.length}
+          </span>
         </div>
 
         {editableZones.length ? editableZones.map((zone) => (
@@ -184,9 +204,13 @@ export default function RedZonesDrawer({
             </button>
           </div>
         )) : (
-          <p className="rounded-2xl bg-slate-100 p-4 text-sm text-slate-500 dark:bg-slate-900">
-            Aún no has agregado zonas personalizadas.
-          </p>
+          <div className="grid place-items-center gap-2 rounded-3xl border border-dashed border-slate-300 bg-slate-100/70 px-5 py-7 text-center dark:border-slate-700 dark:bg-slate-900/60">
+            <span className="grid size-10 place-items-center rounded-2xl bg-white text-slate-400 shadow-sm dark:bg-slate-800">
+              <AlertTriangle size={19} />
+            </span>
+            <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">Aún no hay zonas personalizadas</p>
+            <small className="text-slate-500">Completa el formulario para añadir la primera.</small>
+          </div>
         )}
       </div>
     </section>
