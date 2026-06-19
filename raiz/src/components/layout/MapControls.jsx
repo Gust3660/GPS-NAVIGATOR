@@ -120,7 +120,6 @@ export default function MapControls({
       <MapControlButton
         className={cx(
           'p-1 text-slate-800 dark:text-white',
-          compassActive && 'ring-2 ring-red-500 dark:ring-red-400',
           compassAvailable === false && 'opacity-70'
         )}
         label={`Brujula ${compassActive ? 'activa' : 'inactiva'}: ${headingLabel}`}
