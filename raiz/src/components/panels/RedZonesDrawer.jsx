@@ -72,7 +72,7 @@ export default function RedZonesDrawer({
     <section
       className={cx(
         drawerClass,
-        'right-20 w-[min(420px,calc(100vw-6rem))] max-sm:right-4 max-sm:w-[calc(100vw-2rem)]'
+        'right-20 w-[min(420px,calc(100vw-6rem))]'
       )}
       aria-label="Administrar zonas rojas"
     >
