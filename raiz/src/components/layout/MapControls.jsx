@@ -92,7 +92,7 @@ export default function MapControls({
   return (
     <div className="fixed right-4 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-3">
       <MapControlButton
-        className={cx(redZonesOpen && 'border-violet-600 text-violet-700 ring-2 ring-violet-400/80 hover:text-violet-800 dark:border-violet-400 dark:text-violet-400 dark:ring-violet-400/60 dark:hover:text-violet-300')}
+        className={cx(redZonesOpen && 'border-violet-800 text-violet-900 ring-2 ring-violet-600 hover:text-violet-950 dark:border-violet-400 dark:text-violet-300 dark:ring-violet-500 dark:hover:text-violet-200')}
         label="Administrar zonas rojas"
         title={redZonesOpen ? 'Cerrar zonas rojas' : 'Añadir o editar zonas rojas'}
         onClick={onOpenRedZones}
@@ -111,7 +111,7 @@ export default function MapControls({
       <MapControlButton
         className={cx(
           locatingOrigin
-          && 'border-violet-600 text-violet-700 ring-2 ring-violet-400/80 opacity-80 dark:border-violet-400 dark:text-violet-400 dark:ring-violet-400/60'
+          && 'border-violet-800 text-violet-900 ring-2 ring-violet-600 opacity-90 dark:border-violet-400 dark:text-violet-300 dark:ring-violet-500'
         )}
         label="Usar mi ubicacion como punto de partida"
         title={locatingOrigin ? 'Obteniendo ubicacion' : 'Obtener ubicacion'}
