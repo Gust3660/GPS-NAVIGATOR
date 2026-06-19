@@ -24,7 +24,7 @@ export function buildPayload(form, vehicleConfig = {}) {
     dest_lng: Number(form.dest_lng),
     stops,
     vehicle_consumption: Number(form.vehicle_consumption),
-    fuel_price_per_liter: Number(form.fuel_price_per_liter),
+    fuel_price_per_liter: Number(form.fuel_price_per_liter || 23.5),
     toll_cost_mxn: Number(form.toll_cost_mxn),
     avoid_tolls: form.avoid_tolls,
     avoid_highways: form.avoid_highways,

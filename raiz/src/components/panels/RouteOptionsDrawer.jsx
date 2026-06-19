@@ -84,7 +84,7 @@ export default function RouteOptionsDrawer({
         {!isElectricVehicle && (
           <label className="grid gap-2">
             <span className={labelTextClass}>Precio combustible</span>
-            <input className={inputClass} type="number" min="0" step="0.1" value={routeForm.fuel_price_per_liter} onChange={(event) => onUpdateRouteOption('fuel_price_per_liter', event.target.value)} />
+            <input className={inputClass} type="number" min="0" step="0.1" placeholder="23.5" value={routeForm.fuel_price_per_liter ?? ''} onChange={(event) => onUpdateRouteOption('fuel_price_per_liter', event.target.value)} />
             <small className="text-slate-500">MXN/L</small>
           </label>
         )}

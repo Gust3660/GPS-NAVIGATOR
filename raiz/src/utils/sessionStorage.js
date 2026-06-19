@@ -25,11 +25,16 @@ export function loadSessionSettings() {
       vehicleConfig.batteryLevel = '';
     }
 
+    const routeForm = parsed.routeForm && typeof parsed.routeForm === 'object' ? parsed.routeForm : null;
+    if (routeForm?.fuel_price_per_liter === '23.5') {
+      routeForm.fuel_price_per_liter = '';
+    }
+
     return {
       ...DEFAULT_SESSION,
       ...parsed,
       originName: normalizeOriginName(parsed.originName ?? DEFAULT_SESSION.originName),
-      routeForm: parsed.routeForm && typeof parsed.routeForm === 'object' ? parsed.routeForm : null,
+      routeForm,
       vehicleConfig
     };
   } catch {

@@ -18,7 +18,7 @@ export const initialRoute = {
   dest_lng: '',
   stops: [],
   vehicle_consumption: '18.18',
-  fuel_price_per_liter: '23.5',
+  fuel_price_per_liter: '',
   toll_cost_mxn: '0',
   avoid_tolls: false,
   avoid_highways: false
