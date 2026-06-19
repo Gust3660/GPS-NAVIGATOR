@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-export function useDraggableOffset({ min = -220, max = 260 } = {}) {
-  const [offset, setOffset] = useState(0);
+export function useDraggableOffset({ initial = 110, min = -220, max = 260 } = {}) {
+  const [offset, setOffset] = useState(initial);
   const [dragging, setDragging] = useState(false);
 
   const startDrag = (event) => {
