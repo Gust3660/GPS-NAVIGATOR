@@ -75,7 +75,7 @@ export default function RouteOptionsDrawer({
               {routeResult?.toll_corridors?.length
                 ? routeResult.toll_corridors.join(', ')
                 : tollUnavailable
-                  ? 'INEGI Sakbe no regreso costo real para esta ruta'
+                  ? 'INEGI no tiene tarifa disponible para esta ruta y vehiculo'
                   : 'INEGI Sakbe no reporto casetas en esta ruta'}
             </small>
           </div>
