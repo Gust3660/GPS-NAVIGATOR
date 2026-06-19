@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: navegacion-gps-backend
+    runtime: python
+    rootDir: Backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: FRONTEND_ORIGINS
+        value: https://TU-SITIO.netlify.app
+      - key: SQLITE_DB_PATH
+        value: /var/data/gps_data.sqlite3
+    disk:
+      name: gps-sqlite-data
+      mountPath: /var/data
+      sizeGB: 1

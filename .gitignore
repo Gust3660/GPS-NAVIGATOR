@@ -1,0 +1,57 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+Backend/.env
+Backend/.env.*
+!Backend/.env.example
+raiz/.env
+raiz/.env.*
+!raiz/.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+Backend/.venv/
+Backend/.venv-root-backup/
+Backend/.venv-uv-broken/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local databases and large local datasets
+Backend/gps_data.sqlite3
+Backend/*.sqlite3
+Backend/*.db
+Backend/carpetasFGJ_2024.csv
+
+# Node / Vite
+node_modules/
+raiz/node_modules/
+raiz/dist/
+raiz/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Logs and generated cache
+*.log
+cache/
+.uv-cache/
+.uv-python/
+Backend/.uv-cache/
+Backend/.uv-python/
+
+# Browser automation temp files
+.chrome-tmp*/
+.edge-tmp*/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,356 @@
+{
+  "source": "Capa nacional de referencia local basada en municipios y corredores urbanos con alta incidencia delictiva reportada publicamente en Mexico",
+  "method": "Puntos rojos nacionales por ciudad o municipio; poligonos pequenos generados alrededor del centro para visualizacion y evasion de ruta.",
+  "zones": [
+    {
+      "name": "Tijuana, Baja California",
+      "polygon": [[-117.073, 32.499], [-117.003, 32.499], [-117.003, 32.569], [-117.073, 32.569]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 32.534, "lng": -117.038 }
+    },
+    {
+      "name": "Mexicali, Baja California",
+      "polygon": [[-115.502, 32.589], [-115.432, 32.589], [-115.432, 32.659], [-115.502, 32.659]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 32.624, "lng": -115.467 }
+    },
+    {
+      "name": "La Paz, Baja California Sur",
+      "polygon": [[-110.347, 24.107], [-110.277, 24.107], [-110.277, 24.177], [-110.347, 24.177]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 24.142, "lng": -110.312 }
+    },
+    {
+      "name": "Los Cabos, Baja California Sur",
+      "polygon": [[-109.951, 22.855], [-109.881, 22.855], [-109.881, 22.925], [-109.951, 22.925]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 22.890, "lng": -109.916 }
+    },
+    {
+      "name": "Ciudad Juarez, Chihuahua",
+      "polygon": [[-106.520, 31.655], [-106.450, 31.655], [-106.450, 31.725], [-106.520, 31.725]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 31.690, "lng": -106.485 }
+    },
+    {
+      "name": "Chihuahua, Chihuahua",
+      "polygon": [[-106.123, 28.600], [-106.053, 28.600], [-106.053, 28.670], [-106.123, 28.670]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 28.635, "lng": -106.088 }
+    },
+    {
+      "name": "Saltillo, Coahuila",
+      "polygon": [[-101.021, 25.388], [-100.951, 25.388], [-100.951, 25.458], [-101.021, 25.458]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 25.423, "lng": -100.986 }
+    },
+    {
+      "name": "Torreon, Coahuila",
+      "polygon": [[-103.456, 25.507], [-103.386, 25.507], [-103.386, 25.577], [-103.456, 25.577]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 25.542, "lng": -103.421 }
+    },
+    {
+      "name": "Culiacan, Sinaloa",
+      "polygon": [[-107.430, 24.774], [-107.360, 24.774], [-107.360, 24.844], [-107.430, 24.844]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 24.809, "lng": -107.395 }
+    },
+    {
+      "name": "Mazatlan, Sinaloa",
+      "polygon": [[-106.455, 23.214], [-106.385, 23.214], [-106.385, 23.284], [-106.455, 23.284]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 23.249, "lng": -106.420 }
+    },
+    {
+      "name": "Hermosillo, Sonora",
+      "polygon": [[-110.990, 29.037], [-110.920, 29.037], [-110.920, 29.107], [-110.990, 29.107]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 29.072, "lng": -110.955 }
+    },
+    {
+      "name": "Ciudad Obregon, Sonora",
+      "polygon": [[-109.970, 27.451], [-109.900, 27.451], [-109.900, 27.521], [-109.970, 27.521]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 27.486, "lng": -109.935 }
+    },
+    {
+      "name": "Durango, Durango",
+      "polygon": [[-104.705, 24.992], [-104.635, 24.992], [-104.635, 25.062], [-104.705, 25.062]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 25.027, "lng": -104.670 }
+    },
+    {
+      "name": "Zacatecas, Zacatecas",
+      "polygon": [[-102.616, 22.735], [-102.546, 22.735], [-102.546, 22.805], [-102.616, 22.805]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 22.770, "lng": -102.581 }
+    },
+    {
+      "name": "Fresnillo, Zacatecas",
+      "polygon": [[-102.900, 23.141], [-102.830, 23.141], [-102.830, 23.211], [-102.900, 23.211]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 23.176, "lng": -102.865 }
+    },
+    {
+      "name": "Monterrey, Nuevo Leon",
+      "polygon": [[-100.352, 25.651], [-100.282, 25.651], [-100.282, 25.721], [-100.352, 25.721]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 25.686, "lng": -100.317 }
+    },
+    {
+      "name": "Reynosa, Tamaulipas",
+      "polygon": [[-98.333, 26.057], [-98.263, 26.057], [-98.263, 26.127], [-98.333, 26.127]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 26.092, "lng": -98.298 }
+    },
+    {
+      "name": "Nuevo Laredo, Tamaulipas",
+      "polygon": [[-99.542, 27.452], [-99.472, 27.452], [-99.472, 27.522], [-99.542, 27.522]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 27.487, "lng": -99.507 }
+    },
+    {
+      "name": "San Luis Potosi, San Luis Potosi",
+      "polygon": [[-101.021, 22.121], [-100.951, 22.121], [-100.951, 22.191], [-101.021, 22.191]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 22.156, "lng": -100.986 }
+    },
+    {
+      "name": "Aguascalientes, Aguascalientes",
+      "polygon": [[-102.331, 21.846], [-102.261, 21.846], [-102.261, 21.916], [-102.331, 21.916]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 21.881, "lng": -102.296 }
+    },
+    {
+      "name": "Guadalajara, Jalisco",
+      "polygon": [[-103.384, 20.638], [-103.314, 20.638], [-103.314, 20.708], [-103.384, 20.708]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 20.673, "lng": -103.349 }
+    },
+    {
+      "name": "Tlajomulco, Jalisco",
+      "polygon": [[-103.478, 20.439], [-103.408, 20.439], [-103.408, 20.509], [-103.478, 20.509]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 20.474, "lng": -103.443 }
+    },
+    {
+      "name": "Tepic, Nayarit",
+      "polygon": [[-104.929, 21.477], [-104.859, 21.477], [-104.859, 21.547], [-104.929, 21.547]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 21.512, "lng": -104.894 }
+    },
+    {
+      "name": "Colima, Colima",
+      "polygon": [[-103.759, 19.208], [-103.689, 19.208], [-103.689, 19.278], [-103.759, 19.278]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 19.243, "lng": -103.724 }
+    },
+    {
+      "name": "Manzanillo, Colima",
+      "polygon": [[-104.351, 19.018], [-104.281, 19.018], [-104.281, 19.088], [-104.351, 19.088]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 19.053, "lng": -104.316 }
+    },
+    {
+      "name": "Morelia, Michoacan",
+      "polygon": [[-101.219, 19.667], [-101.149, 19.667], [-101.149, 19.737], [-101.219, 19.737]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 19.702, "lng": -101.184 }
+    },
+    {
+      "name": "Uruapan, Michoacan",
+      "polygon": [[-102.099, 19.385], [-102.029, 19.385], [-102.029, 19.455], [-102.099, 19.455]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 19.420, "lng": -102.064 }
+    },
+    {
+      "name": "Leon, Guanajuato",
+      "polygon": [[-101.719, 21.087], [-101.649, 21.087], [-101.649, 21.157], [-101.719, 21.157]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 21.122, "lng": -101.684 }
+    },
+    {
+      "name": "Celaya, Guanajuato",
+      "polygon": [[-100.850, 20.488], [-100.780, 20.488], [-100.780, 20.558], [-100.850, 20.558]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 20.523, "lng": -100.815 }
+    },
+    {
+      "name": "Queretaro, Queretaro",
+      "polygon": [[-100.424, 20.553], [-100.354, 20.553], [-100.354, 20.623], [-100.424, 20.623]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 20.588, "lng": -100.389 }
+    },
+    {
+      "name": "Pachuca, Hidalgo",
+      "polygon": [[-98.773, 20.087], [-98.703, 20.087], [-98.703, 20.157], [-98.773, 20.157]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 20.122, "lng": -98.738 }
+    },
+    {
+      "name": "Toluca, Estado de Mexico",
+      "polygon": [[-99.692, 19.247], [-99.622, 19.247], [-99.622, 19.317], [-99.692, 19.317]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 19.282, "lng": -99.657 }
+    },
+    {
+      "name": "Ecatepec, Estado de Mexico",
+      "polygon": [[-99.087, 19.566], [-99.017, 19.566], [-99.017, 19.636], [-99.087, 19.636]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 19.601, "lng": -99.052 }
+    },
+    {
+      "name": "Centro Historico, Ciudad de Mexico",
+      "polygon": [[-99.173, 19.397], [-99.103, 19.397], [-99.103, 19.467], [-99.173, 19.467]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 19.432, "lng": -99.138 }
+    },
+    {
+      "name": "Cuernavaca, Morelos",
+      "polygon": [[-99.271, 18.889], [-99.201, 18.889], [-99.201, 18.959], [-99.271, 18.959]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 18.924, "lng": -99.236 }
+    },
+    {
+      "name": "Cuautla, Morelos",
+      "polygon": [[-98.990, 18.777], [-98.920, 18.777], [-98.920, 18.847], [-98.990, 18.847]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 18.812, "lng": -98.955 }
+    },
+    {
+      "name": "Tlaxcala, Tlaxcala",
+      "polygon": [[-98.272, 19.283], [-98.202, 19.283], [-98.202, 19.353], [-98.272, 19.353]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 19.318, "lng": -98.237 }
+    },
+    {
+      "name": "Puebla, Puebla",
+      "polygon": [[-98.242, 19.006], [-98.172, 19.006], [-98.172, 19.076], [-98.242, 19.076]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 19.041, "lng": -98.207 }
+    },
+    {
+      "name": "Acapulco, Guerrero",
+      "polygon": [[-99.935, 16.818], [-99.865, 16.818], [-99.865, 16.888], [-99.935, 16.888]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 16.853, "lng": -99.900 }
+    },
+    {
+      "name": "Chilpancingo, Guerrero",
+      "polygon": [[-99.536, 17.516], [-99.466, 17.516], [-99.466, 17.586], [-99.536, 17.586]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 17.551, "lng": -99.501 }
+    },
+    {
+      "name": "Oaxaca, Oaxaca",
+      "polygon": [[-96.761, 17.038], [-96.691, 17.038], [-96.691, 17.108], [-96.761, 17.108]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 17.073, "lng": -96.726 }
+    },
+    {
+      "name": "Veracruz, Veracruz",
+      "polygon": [[-96.177, 19.138], [-96.107, 19.138], [-96.107, 19.208], [-96.177, 19.208]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 19.173, "lng": -96.142 }
+    },
+    {
+      "name": "Coatzacoalcos, Veracruz",
+      "polygon": [[-94.475, 18.115], [-94.405, 18.115], [-94.405, 18.185], [-94.475, 18.185]],
+      "source": "Referencia nacional local",
+      "risk_level": "alto",
+      "center": { "lat": 18.150, "lng": -94.440 }
+    },
+    {
+      "name": "Villahermosa, Tabasco",
+      "polygon": [[-93.012, 17.954], [-92.942, 17.954], [-92.942, 18.024], [-93.012, 18.024]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 17.989, "lng": -92.977 }
+    },
+    {
+      "name": "Tuxtla Gutierrez, Chiapas",
+      "polygon": [[-93.151, 16.718], [-93.081, 16.718], [-93.081, 16.788], [-93.151, 16.788]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 16.753, "lng": -93.116 }
+    },
+    {
+      "name": "Tapachula, Chiapas",
+      "polygon": [[-92.302, 14.876], [-92.232, 14.876], [-92.232, 14.946], [-92.302, 14.946]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 14.911, "lng": -92.267 }
+    },
+    {
+      "name": "Campeche, Campeche",
+      "polygon": [[-90.570, 19.810], [-90.500, 19.810], [-90.500, 19.880], [-90.570, 19.880]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 19.845, "lng": -90.535 }
+    },
+    {
+      "name": "Merida, Yucatan",
+      "polygon": [[-89.657, 20.932], [-89.587, 20.932], [-89.587, 21.002], [-89.657, 21.002]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 20.967, "lng": -89.622 }
+    },
+    {
+      "name": "Cancun, Quintana Roo",
+      "polygon": [[-86.882, 21.126], [-86.812, 21.126], [-86.812, 21.196], [-86.882, 21.196]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 21.161, "lng": -86.847 }
+    },
+    {
+      "name": "Chetumal, Quintana Roo",
+      "polygon": [[-88.337, 18.465], [-88.267, 18.465], [-88.267, 18.535], [-88.337, 18.535]],
+      "source": "Referencia nacional local",
+      "risk_level": "medio-alto",
+      "center": { "lat": 18.500, "lng": -88.302 }
+    }
+  ]
+}
