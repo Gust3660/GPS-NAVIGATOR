@@ -80,6 +80,7 @@ export default function MapControls({
   compassActive,
   compassAvailable,
   compassHeading,
+  redZonesOpen,
   onOpenRedZones,
   onToggleLayer,
   onLocateOrigin,
@@ -91,9 +92,11 @@ export default function MapControls({
   return (
     <div className="fixed right-4 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-3">
       <MapControlButton
+        className={cx(redZonesOpen && 'bg-red-500 text-white ring-2 ring-red-200/80 dark:bg-red-500 dark:text-white dark:ring-red-300/40')}
         label="Administrar zonas rojas"
-        title="Añadir o editar zonas rojas"
+        title={redZonesOpen ? 'Cerrar zonas rojas' : 'Añadir o editar zonas rojas'}
         onClick={onOpenRedZones}
+        aria-expanded={redZonesOpen}
       >
         <ShieldPlus size={25} />
       </MapControlButton>

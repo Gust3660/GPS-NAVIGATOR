@@ -235,11 +235,12 @@ export default function AppView({
           compassActive,
           compassAvailable,
           compassHeading,
+          redZonesOpen,
           onToggleLayer: toggleMapLayer,
           onLocateOrigin: locateOrigin,
           onToggleCompass: handleToggleCompass,
           onZoom: zoomMap,
-          onOpenRedZones: () => setRedZonesOpen(true)
+          onOpenRedZones: () => setRedZonesOpen((open) => !open)
         }}
         summaryOpen={summaryOpen}
         summaryProps={{
