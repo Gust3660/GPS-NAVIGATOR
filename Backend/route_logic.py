@@ -1,5 +1,6 @@
 import json
 import math
+import os
 import re
 import unicodedata
 from heapq import heappop, heappush
@@ -10,7 +11,10 @@ import polyline
 from shapely.geometry import LineString, Point, Polygon
 
 EARTH_RADIUS_M = 6_371_000
-OSRM_BASE_URL = "https://router.project-osrm.org/route/v1/driving"
+OSRM_BASE_URL = os.getenv(
+    "OSRM_BASE_URL",
+    "https://router.project-osrm.org/route/v1/driving",
+).rstrip("/")
 RED_ZONE_SAFETY_RADIUS_M = 5_000
 
 LOCAL_PLACES = {
@@ -105,7 +109,18 @@ def osrm_excluded_classes(avoid_tolls=False, avoid_highways=False):
     return excluded
 
 
+def osrm_supports_exclusions():
+    value = os.getenv("OSRM_SUPPORTS_EXCLUSIONS", "").strip().lower()
+    return value in {"1", "true", "yes", "on"}
+
+
 def fetch_osrm_routes(points, alternatives=True, timeout=10, excludes=None):
+    if excludes and not osrm_supports_exclusions():
+        raise RuntimeError(
+            "el servidor OSRM configurado no declara soporte para exclusiones; "
+            "configura un perfil OSRM propio y OSRM_SUPPORTS_EXCLUSIONS=true"
+        )
+
     coordinate_text = ";".join(f"{lng},{lat}" for lat, lng in points)
     query = {
         "overview": "full",

@@ -8,6 +8,7 @@ from route_logic import (
     calculate_road_network_route,
     intersecting_red_zones,
     manhattan_distance,
+    osrm_supports_exclusions,
 )
 from schemas import RouteRequest
 
@@ -127,34 +128,40 @@ def calculate_route_response(req: RouteRequest):
     red_zones = get_red_zones()
     traffic_context = get_google_traffic_context(origin, destination)
     osrm_error = None
-    try:
-        result = calculate_road_network_route(
-            origin,
-            destination,
-            red_zones,
-            stops=stops,
-            avoid_tolls=req.avoid_tolls,
-            avoid_highways=req.avoid_highways,
-            traffic_context=traffic_context,
+    has_restrictions = req.avoid_tolls or req.avoid_highways
+
+    if has_restrictions and not osrm_supports_exclusions():
+        result = None
+        osrm_error = RuntimeError(
+            "OSRM omitido: el servidor configurado no garantiza exclusiones"
         )
-    except Exception as osrm_exc:
-        osrm_error = osrm_exc
-        if not req.avoid_tolls and not req.avoid_highways:
-            result = calculate_local_route(
+    else:
+        try:
+            result = calculate_road_network_route(
                 origin,
                 destination,
                 red_zones,
                 stops=stops,
+                avoid_tolls=req.avoid_tolls,
+                avoid_highways=req.avoid_highways,
                 traffic_context=traffic_context,
             )
-            result["fallback_reason"] = f"Red vial no disponible: {osrm_error}"
-        else:
-            result = None
+        except Exception as osrm_exc:
+            osrm_error = osrm_exc
+            if not has_restrictions:
+                result = calculate_local_route(
+                    origin,
+                    destination,
+                    red_zones,
+                    stops=stops,
+                    traffic_context=traffic_context,
+                )
+                result["fallback_reason"] = f"Red vial no disponible: {osrm_error}"
+            else:
+                result = None
 
-        if result and not result.get("error"):
-            pass
-        else:
-            result = None
+            if not result or result.get("error"):
+                result = None
 
     if result is None:
         try:
@@ -167,7 +174,12 @@ def calculate_route_response(req: RouteRequest):
                 vehicle_type=req.vehicle_type,
             )
             result = inegi_result_to_route(origin, destination, stops, inegi_result, traffic_context, red_zones)
-            result["fallback_reason"] = f"OSRM no disponible: {osrm_error}"
+            osrm_detail = str(osrm_error)
+            result["fallback_reason"] = (
+                osrm_detail
+                if osrm_detail.startswith("OSRM omitido:")
+                else f"OSRM no disponible: {osrm_detail}"
+            )
         except Exception as inegi_exc:
             return {
                 "error": (

@@ -64,7 +64,7 @@ def _data_or_error(response):
     return data
 
 
-def _nearest_line(lat, lng):
+def _nearest_line(lat, lng, point_name="punto"):
     last_error = None
     data = None
     for scale in (10000, 25000, 50000, 100000, 250000):
@@ -82,7 +82,11 @@ def _nearest_line(lat, lng):
             last_error = exc
 
     if data is None:
-        raise last_error or InegiRoutingError("No se encontro linea cercana en INEGI")
+        detail = str(last_error) if last_error else "No se encontro linea cercana"
+        raise InegiRoutingError(
+            f"INEGI no encontró una línea vial para {point_name} "
+            f"({lat:.6f}, {lng:.6f}) después de probar varias escalas: {detail}"
+        )
 
     return {
         "id": data["id_routing_net"],
@@ -111,8 +115,8 @@ def _geojson_to_polyline(geojson_value):
 
 
 def _route_segment_with_inegi(origin, destination, avoid_tolls=False, avoid_highways=False, vehicle_type="Auto"):
-    origin_line = _nearest_line(origin[0], origin[1])
-    destination_line = _nearest_line(destination[0], destination[1])
+    origin_line = _nearest_line(origin[0], origin[1], "el origen")
+    destination_line = _nearest_line(destination[0], destination[1], "el destino")
     endpoint = "libre" if (avoid_tolls or avoid_highways) else "optima"
     excluded_classes = []
     if avoid_tolls:
