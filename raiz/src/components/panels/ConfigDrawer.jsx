@@ -75,8 +75,10 @@ export default function ConfigDrawer({
           <>
             <label className="grid gap-2">
               <span className={labelTextClass}>Nivel de bateria al iniciar el recorrido</span>
-              <input className={inputClass} type="number" min="0" max="100" placeholder="82" value={vehicleConfig.batteryLevel ?? ''} onChange={(event) => onVehicleConfigChange('batteryLevel', event.target.value)} />
-              <small className="text-slate-500">%</small>
+              <span className="relative">
+                <input className={cx(inputClass, 'w-full pr-10')} type="number" min="0" max="100" placeholder="82" value={vehicleConfig.batteryLevel ?? ''} onChange={(event) => onVehicleConfigChange('batteryLevel', event.target.value)} />
+                <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-500 dark:text-slate-400">%</span>
+              </span>
             </label>
             <div className="rounded-2xl bg-slate-100 p-4 dark:bg-slate-900">
               <span className={labelTextClass}>Consumo estimado del recorrido</span>
