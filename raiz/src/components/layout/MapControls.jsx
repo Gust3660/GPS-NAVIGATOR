@@ -69,7 +69,7 @@ function CompassIcon({ heading = 0, active = false }) {
         <span className="absolute left-0 top-0 h-0 w-0 border-x-[6px] border-b-[15px] border-x-transparent border-b-slate-300 dark:border-b-slate-500" />
         <span className="absolute bottom-0 left-0 h-0 w-0 border-x-[6px] border-t-[15px] border-x-transparent border-t-red-500 dark:border-t-red-400" />
       </span>
-      {active && <span className="absolute inset-0 rounded-full ring-2 ring-emerald-400/60 dark:ring-emerald-300/70" />}
+      {active && <span className="absolute inset-0 rounded-full ring-2 ring-red-500/80 dark:ring-red-400/80" />}
     </span>
   );
 }
@@ -120,7 +120,7 @@ export default function MapControls({
       <MapControlButton
         className={cx(
           'p-1 text-slate-800 dark:text-white',
-          compassActive && 'ring-2 ring-emerald-400 dark:ring-emerald-300',
+          compassActive && 'ring-2 ring-red-500 dark:ring-red-400',
           compassAvailable === false && 'opacity-70'
         )}
         label={`Brujula ${compassActive ? 'activa' : 'inactiva'}: ${headingLabel}`}
