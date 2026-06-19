@@ -11,7 +11,7 @@ import { useDraggableOffset } from './hooks/useDraggableOffset.js';
 import { useNavigationMode } from './hooks/useNavigationMode.js';
 import { usePlaceRouting } from './hooks/usePlaceRouting.js';
 import { useRouteAutoRefresh } from './hooks/useRouteAutoRefresh.js';
-import { useRouteController } from './hooks/useRouteController.js';
+import { isStaleRouteError, useRouteController } from './hooks/useRouteController.js';
 import { useRouteDerivedState } from './hooks/useRouteDerivedState.js';
 import { useSessionPersistence } from './hooks/useSessionPersistence.js';
 import { useStartupData } from './hooks/useStartupData.js';
@@ -258,15 +258,23 @@ export default function App() {
 
     if (key === 'vehicle' && hasRouteEndpoints(routeForm)) {
       refreshRoute(routeForm, true, true, { vehicleConfigOverride: nextVehicleConfig })
-        .catch(() => notifyError('No se pudo recalcular casetas para ese vehiculo', 'vehicle-toll-recalc-error'));
+        .catch((error) => {
+          if (!isStaleRouteError(error)) {
+            notifyError('No se pudo recalcular casetas para ese vehiculo', 'vehicle-toll-recalc-error');
+          }
+        });
     }
 
-    if (['efficiency', 'combinedEfficiency'].includes(key)) {
+    if (['efficiency', 'highwayEfficiency', 'cityEfficiency', 'combinedEfficiency'].includes(key)) {
       const kmPerLiter = Math.max(Number(value || nextVehicleConfig.combinedEfficiency || nextVehicleConfig.efficiency || 5.5) || 1, 1);
       const nextForm = { ...routeForm, vehicle_consumption: String(100 / kmPerLiter) };
       setRouteForm(nextForm);
       if (hasRouteEndpoints(nextForm)) {
-        refreshRoute(nextForm, true, true, { vehicleConfigOverride: nextVehicleConfig }).catch(() => notifyError('No se pudo recalcular consumo', 'fuel-recalc-error'));
+        refreshRoute(nextForm, true, true, { vehicleConfigOverride: nextVehicleConfig }).catch((error) => {
+          if (!isStaleRouteError(error)) {
+            notifyError('No se pudo recalcular consumo', 'fuel-recalc-error');
+          }
+        });
       }
     }
   };
