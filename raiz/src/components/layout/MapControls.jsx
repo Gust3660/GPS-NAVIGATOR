@@ -109,7 +109,10 @@ export default function MapControls({
         <Layers size={25} />
       </MapControlButton>
       <MapControlButton
-        className={cx(locatingOrigin && 'opacity-60')}
+        className={cx(
+          locatingOrigin
+          && 'border-violet-600 text-violet-700 ring-2 ring-violet-400/80 opacity-80 dark:border-violet-400 dark:text-violet-400 dark:ring-violet-400/60'
+        )}
         label="Usar mi ubicacion como punto de partida"
         title={locatingOrigin ? 'Obteniendo ubicacion' : 'Obtener ubicacion'}
         onClick={onLocateOrigin}
