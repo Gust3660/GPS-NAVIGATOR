@@ -37,14 +37,14 @@ export default function ConfigDrawer({
           <h3 className="font-black">Consumo de combustible</h3>
           <p className="text-sm text-slate-500">Ingresa el rendimiento de tu vehiculo para obtener estimaciones mas precisas de combustible y costos.</p>
           {[
-            ['Autopista', '14.0', Route],
-            ['Ciudad', '9.0', BuildingIcon],
-            ['Combinado', '11.5', Fuel]
-          ].map(([label, value, Icon]) => (
+            ['Autopista', '14.0', 'highwayEfficiency', Route],
+            ['Ciudad', '9.0', 'cityEfficiency', BuildingIcon],
+            ['Combinado', '11.5', 'combinedEfficiency', Fuel]
+          ].map(([label, value, key, Icon]) => (
             <label key={label} className="grid grid-cols-[24px_1fr_90px_44px] items-center gap-2">
               <Icon size={19} className="text-emerald-500 dark:text-yellow-400" />
               <span>{label}</span>
-              <input className={inputClass} placeholder={value} value="" readOnly />
+              <input className={inputClass} type="number" min="0" step="0.1" placeholder={value} value={vehicleConfig[key] ?? ''} onChange={(event) => onVehicleConfigChange(key, event.target.value)} />
               <small className="text-slate-500">km/L</small>
             </label>
           ))}

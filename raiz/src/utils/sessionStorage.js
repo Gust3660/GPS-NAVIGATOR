@@ -27,6 +27,15 @@ export function loadSessionSettings() {
     if (vehicleConfig?.efficiency === '5.5') {
       vehicleConfig.efficiency = '';
     }
+    if (vehicleConfig?.highwayEfficiency === '14.0') {
+      vehicleConfig.highwayEfficiency = '';
+    }
+    if (vehicleConfig?.cityEfficiency === '9.0') {
+      vehicleConfig.cityEfficiency = '';
+    }
+    if (vehicleConfig?.combinedEfficiency === '11.5') {
+      vehicleConfig.combinedEfficiency = '';
+    }
 
     const routeForm = parsed.routeForm && typeof parsed.routeForm === 'object' ? parsed.routeForm : null;
     if (routeForm?.fuel_price_per_liter === '23.5') {

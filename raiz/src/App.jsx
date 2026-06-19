@@ -261,8 +261,8 @@ export default function App() {
         .catch(() => notifyError('No se pudo recalcular casetas para ese vehiculo', 'vehicle-toll-recalc-error'));
     }
 
-    if (key === 'efficiency') {
-      const kmPerLiter = Math.max(Number(value || 5.5) || 1, 1);
+    if (['efficiency', 'combinedEfficiency'].includes(key)) {
+      const kmPerLiter = Math.max(Number(value || nextVehicleConfig.combinedEfficiency || nextVehicleConfig.efficiency || 5.5) || 1, 1);
       const nextForm = { ...routeForm, vehicle_consumption: String(100 / kmPerLiter) };
       setRouteForm(nextForm);
       if (hasRouteEndpoints(nextForm)) {
