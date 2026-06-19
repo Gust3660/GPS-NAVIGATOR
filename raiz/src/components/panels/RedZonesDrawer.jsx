@@ -70,10 +70,11 @@ export default function RedZonesDrawer({
 
   return (
     <section
-      className={cx(
-        drawerClass,
-        'right-20 w-[min(420px,calc(100vw-6rem))]'
-      )}
+      className={drawerClass}
+      style={{
+        right: '5rem',
+        width: 'min(420px, calc(100vw - 6rem))'
+      }}
       aria-label="Administrar zonas rojas"
     >
       <div className={cx(drawerHeadClass, 'items-start')}>
