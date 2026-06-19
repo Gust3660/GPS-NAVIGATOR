@@ -20,12 +20,17 @@ export function loadSessionSettings() {
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object') return DEFAULT_SESSION;
 
+    const vehicleConfig = parsed.vehicleConfig && typeof parsed.vehicleConfig === 'object' ? parsed.vehicleConfig : null;
+    if (vehicleConfig?.batteryLevel === '82') {
+      vehicleConfig.batteryLevel = '';
+    }
+
     return {
       ...DEFAULT_SESSION,
       ...parsed,
       originName: normalizeOriginName(parsed.originName ?? DEFAULT_SESSION.originName),
       routeForm: parsed.routeForm && typeof parsed.routeForm === 'object' ? parsed.routeForm : null,
-      vehicleConfig: parsed.vehicleConfig && typeof parsed.vehicleConfig === 'object' ? parsed.vehicleConfig : null
+      vehicleConfig
     };
   } catch {
     return DEFAULT_SESSION;

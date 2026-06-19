@@ -38,7 +38,8 @@ export function useRouteDerivedState({
   const trafficLevel = routeResult?.traffic_level ?? 'normal';
   const trafficSource = routeResult?.optimization?.traffic_source === 'google_routes' ? 'Google' : 'local';
   const isElectricVehicle = vehicleConfig.vehicle === 'Electrico';
-  const initialBatteryLevel = Math.min(Math.max(Number(vehicleConfig.batteryLevel) || 0, 0), 100);
+  const hasBatteryLevel = vehicleConfig.batteryLevel !== '' && vehicleConfig.batteryLevel != null;
+  const initialBatteryLevel = hasBatteryLevel ? Math.min(Math.max(Number(vehicleConfig.batteryLevel) || 0, 0), 100) : 0;
   const batteryUsed = isElectricVehicle ? Math.min((distance / electricRangeKm) * 100, initialBatteryLevel) : 0;
   const estimatedBatteryLevel = Math.max(initialBatteryLevel - batteryUsed, 0);
 
