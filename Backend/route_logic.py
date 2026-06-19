@@ -284,6 +284,11 @@ def grid_bounds(start, end, red_zones, padding=0.018):
 
 
 def route_grid_segment(start, end, red_zones=None, step=0.003):
+    """Calcula un segmento con A* y heuristica Manhattan.
+
+    Cada nodo usa f(n) = g(n) + h(n), donde g(n) es la distancia real
+    acumulada y h(n) es la distancia Manhattan estimada hasta el destino.
+    """
     red_zones = nearby_red_zones_for_segment(start, end, red_zones or [])
     distance = haversine_distance_m(start[0], start[1], end[0], end[1])
     if distance > 150_000:
@@ -337,8 +342,14 @@ def route_grid_segment(start, end, red_zones=None, step=0.003):
             new_cost = cost_so_far[current] + segment_cost
             if nxt not in cost_so_far or new_cost < cost_so_far[nxt]:
                 cost_so_far[nxt] = new_cost
-                heuristic = manhattan_distance(next_point[0], next_point[1], end[0], end[1]) * 1000
-                heappush(frontier, (new_cost + heuristic, nxt))
+                heuristic_m = manhattan_distance(
+                    next_point[0],
+                    next_point[1],
+                    end[0],
+                    end[1],
+                ) * 1000
+                priority = new_cost + heuristic_m
+                heappush(frontier, (priority, nxt))
                 came_from[nxt] = current
 
     if end_node not in came_from:
@@ -616,7 +627,15 @@ def calculate_road_network_route(origin, destination, red_zones, stops=None, avo
     }
 
 
-def calculate_local_route(origin, destination, red_zones, avoid_tolls=False, avoid_highways=False, traffic_context=None):
+def calculate_local_route(
+    origin,
+    destination,
+    red_zones,
+    stops=None,
+    avoid_tolls=False,
+    avoid_highways=False,
+    traffic_context=None,
+):
     if avoid_tolls or avoid_highways:
         restrictions = []
         if avoid_tolls:
@@ -631,10 +650,11 @@ def calculate_local_route(origin, destination, red_zones, avoid_tolls=False, avo
             )
         }
 
-    points = [origin, destination]
-    waypoints = []
+    required_stops = stops or []
+    points = [origin, *required_stops, destination]
+    waypoints = list(required_stops)
     coords = build_route_coords(points, red_zones=red_zones)
-    exempt_points = [origin, destination]
+    exempt_points = [origin, *required_stops, destination]
     hit_zones = []
 
     for _ in range(5):
@@ -642,13 +662,13 @@ def calculate_local_route(origin, destination, red_zones, avoid_tolls=False, avo
         if not hit_zones:
             break
 
-        waypoint = find_safe_waypoint(points[-2], points[-1], red_zones)
+        waypoint = find_safe_waypoint(origin, destination, red_zones)
         if not waypoint:
             names = ", ".join(zone["name"] for zone in hit_zones)
             return {"error": f"No se pudo evitar la zona roja: {names}"}
 
         points.insert(-1, waypoint)
-        waypoints.append(waypoint)
+        waypoints = points[1:-1]
         coords = build_route_coords(points, red_zones=red_zones)
     else:
         return {"error": "No se encontro una ruta segura con los limites actuales"}
@@ -686,9 +706,17 @@ def calculate_local_route(origin, destination, red_zones, avoid_tolls=False, avo
         "distance": distance,
         "duration": duration,
         "waypoints": waypoints,
-        "route_model": "manhattan_detour_hill_climbing",
+        "route_model": "astar_manhattan_grid",
         "optimization": {
-            "models": ["manhattan_distance", "red_zone_penalty", "hill_climbing"],
+            "algorithm": "A*",
+            "cost_function": "f(n) = g(n) + h(n)",
+            "heuristic": "manhattan_distance",
+            "models": [
+                "astar",
+                "manhattan_heuristic",
+                "red_zone_obstacle",
+                "hill_climbing_waypoint_refinement",
+            ],
             "traffic_factor": traffic_factor,
             "traffic_source": traffic_source,
             "traffic_level": traffic_level,

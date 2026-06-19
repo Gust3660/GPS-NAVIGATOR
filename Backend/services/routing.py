@@ -4,6 +4,7 @@ from core.red_zones import RED_ZONE_DATA, RED_ZONES
 from google_context import get_google_traffic_context
 from inegi_routing import route_with_inegi, sakbe_vehicle_code
 from route_logic import (
+    calculate_local_route,
     calculate_road_network_route,
     intersecting_red_zones,
     manhattan_distance,
@@ -124,8 +125,8 @@ def calculate_route_response(req: RouteRequest):
     destination = (req.dest_lat, req.dest_lng)
     stops = [(stop.lat, stop.lng) for stop in req.stops]
     traffic_context = get_google_traffic_context(origin, destination)
-    try:
-        result = calculate_road_network_route(
+    if not req.avoid_tolls and not req.avoid_highways:
+        result = calculate_local_route(
             origin,
             destination,
             RED_ZONES,
@@ -134,25 +135,36 @@ def calculate_route_response(req: RouteRequest):
             avoid_highways=req.avoid_highways,
             traffic_context=traffic_context,
         )
-    except Exception as osrm_exc:
+    else:
         try:
-            inegi_result = route_with_inegi(
+            result = calculate_road_network_route(
                 origin,
                 destination,
+                RED_ZONES,
                 stops=stops,
                 avoid_tolls=req.avoid_tolls,
                 avoid_highways=req.avoid_highways,
-                vehicle_type=req.vehicle_type,
+                traffic_context=traffic_context,
             )
-            result = inegi_result_to_route(origin, destination, stops, inegi_result, traffic_context)
-            result["fallback_reason"] = f"OSRM no disponible: {osrm_exc}"
-        except Exception as inegi_exc:
-            return {
-                "error": (
-                    "No se pudo calcular una ruta real con motores viales. "
-                    f"OSRM: {osrm_exc}; INEGI: {inegi_exc}"
+        except Exception as osrm_exc:
+            try:
+                inegi_result = route_with_inegi(
+                    origin,
+                    destination,
+                    stops=stops,
+                    avoid_tolls=req.avoid_tolls,
+                    avoid_highways=req.avoid_highways,
+                    vehicle_type=req.vehicle_type,
                 )
-            }
+                result = inegi_result_to_route(origin, destination, stops, inegi_result, traffic_context)
+                result["fallback_reason"] = f"OSRM no disponible: {osrm_exc}"
+            except Exception as inegi_exc:
+                return {
+                    "error": (
+                        "No se pudo calcular una ruta con las restricciones solicitadas. "
+                        f"OSRM: {osrm_exc}; INEGI: {inegi_exc}"
+                    )
+                }
 
     if result.get("error"):
         return {"error": result["error"]}
@@ -213,7 +225,7 @@ def calculate_route_response(req: RouteRequest):
         "manhattan_distance_km": round(manhattan_km, 2),
         "waypoints": result.get("waypoints", []),
         "route_steps": result.get("route_steps", []),
-        "engine": result.get("route_model", "manhattan_detour_hill_climbing"),
+        "engine": result.get("route_model", "astar_manhattan_grid"),
         "optimization": result.get("optimization"),
         "google_warning": traffic_context.get("warning"),
         "red_zones": RED_ZONES,
@@ -237,5 +249,8 @@ def calculate_route_response(req: RouteRequest):
             "excluded_classes": result.get("optimization", {}).get("excluded_classes", []),
         },
         "fallback_reason": result.get("fallback_reason"),
-        "summary": "Ruta por red vial real; OSRM como motor principal e INEGI Sakbe como respaldo en Mexico.",
+        "summary": (
+            "Ruta calculada con A* usando la heuristica Manhattan. "
+            "OSRM e INEGI se usan como respaldo para restricciones viales."
+        ),
     }
