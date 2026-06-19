@@ -126,8 +126,9 @@ def calculate_route_response(req: RouteRequest):
     stops = [(stop.lat, stop.lng) for stop in req.stops]
     red_zones = get_red_zones()
     traffic_context = get_google_traffic_context(origin, destination)
-    if not req.avoid_tolls and not req.avoid_highways:
-        result = calculate_local_route(
+    osrm_error = None
+    try:
+        result = calculate_road_network_route(
             origin,
             destination,
             red_zones,
@@ -136,36 +137,44 @@ def calculate_route_response(req: RouteRequest):
             avoid_highways=req.avoid_highways,
             traffic_context=traffic_context,
         )
-    else:
-        try:
-            result = calculate_road_network_route(
+    except Exception as osrm_exc:
+        osrm_error = osrm_exc
+        if not req.avoid_tolls and not req.avoid_highways:
+            result = calculate_local_route(
                 origin,
                 destination,
                 red_zones,
                 stops=stops,
-                avoid_tolls=req.avoid_tolls,
-                avoid_highways=req.avoid_highways,
                 traffic_context=traffic_context,
             )
-        except Exception as osrm_exc:
-            try:
-                inegi_result = route_with_inegi(
-                    origin,
-                    destination,
-                    stops=stops,
-                    avoid_tolls=req.avoid_tolls,
-                    avoid_highways=req.avoid_highways,
-                    vehicle_type=req.vehicle_type,
+            result["fallback_reason"] = f"Red vial no disponible: {osrm_error}"
+        else:
+            result = None
+
+        if result and not result.get("error"):
+            pass
+        else:
+            result = None
+
+    if result is None:
+        try:
+            inegi_result = route_with_inegi(
+                origin,
+                destination,
+                stops=stops,
+                avoid_tolls=req.avoid_tolls,
+                avoid_highways=req.avoid_highways,
+                vehicle_type=req.vehicle_type,
+            )
+            result = inegi_result_to_route(origin, destination, stops, inegi_result, traffic_context, red_zones)
+            result["fallback_reason"] = f"OSRM no disponible: {osrm_error}"
+        except Exception as inegi_exc:
+            return {
+                "error": (
+                    "No se pudo calcular una ruta con las restricciones solicitadas. "
+                    f"OSRM: {osrm_error}; INEGI: {inegi_exc}"
                 )
-                result = inegi_result_to_route(origin, destination, stops, inegi_result, traffic_context, red_zones)
-                result["fallback_reason"] = f"OSRM no disponible: {osrm_exc}"
-            except Exception as inegi_exc:
-                return {
-                    "error": (
-                        "No se pudo calcular una ruta con las restricciones solicitadas. "
-                        f"OSRM: {osrm_exc}; INEGI: {inegi_exc}"
-                    )
-                }
+            }
 
     if result.get("error"):
         return {"error": result["error"]}
@@ -251,7 +260,7 @@ def calculate_route_response(req: RouteRequest):
         },
         "fallback_reason": result.get("fallback_reason"),
         "summary": (
-            "Ruta calculada con A* usando la heuristica Manhattan. "
-            "OSRM e INEGI se usan como respaldo para restricciones viales."
+            "A* y Manhattan eligen el corredor seguro; la red vial ajusta "
+            "el trazado a calles y carreteras reales."
         ),
     }

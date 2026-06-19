@@ -451,10 +451,11 @@ def route_objective(coords, red_zones, exempt_points=None):
 
 
 def candidate_waypoints_for_zone(zone, padding=0.008):
-    lngs = [point[0] for point in zone["polygon"]]
-    lats = [point[1] for point in zone["polygon"]]
-    min_lng, max_lng = min(lngs) - padding, max(lngs) + padding
-    min_lat, max_lat = min(lats) - padding, max(lats) + padding
+    min_lng, min_lat, max_lng, max_lat = red_zone_polygon(zone).bounds
+    min_lng -= padding
+    max_lng += padding
+    min_lat -= padding
+    max_lat += padding
     mid_lng = (min_lng + max_lng) / 2
     mid_lat = (min_lat + max_lat) / 2
 
@@ -540,6 +541,28 @@ def score_road_route(route, red_zones, exempt_points=None):
     return route["distance"] + len(hits) * 1_000_000_000, hits
 
 
+def astar_guidance_waypoints(origin, destination, red_zones, max_waypoints=8):
+    """Obtiene puntos guia seguros con A* y Manhattan para ajustarlos a calles."""
+    guidance_zones = [
+        {
+            **zone,
+            "safety_radius_km": float(zone.get("safety_radius_km", 5)) + 2,
+        }
+        for zone in red_zones
+    ]
+    coords = build_route_coords([origin, destination], red_zones=guidance_zones)
+    if len(coords) < 3:
+        return []
+
+    simplified = list(LineString(coords).simplify(0.0025, preserve_topology=False).coords)
+    interior = simplified[1:-1]
+    if len(interior) > max_waypoints:
+        step = len(interior) / max_waypoints
+        interior = [interior[min(int(index * step), len(interior) - 1)] for index in range(max_waypoints)]
+
+    return [(lat, lng) for lng, lat in interior]
+
+
 def road_route_candidates(origin, destination, red_zones, stops=None, avoid_tolls=False, avoid_highways=False):
     stops = stops or []
     required_points = [origin, *stops, destination]
@@ -568,6 +591,26 @@ def road_route_candidates(origin, destination, red_zones, stops=None, avoid_toll
         for zone in candidate["hit_zones"]:
             if zone["name"] not in {item["name"] for item in hit_zones}:
                 hit_zones.append(zone)
+
+    if hit_zones:
+        guidance = astar_guidance_waypoints(origin, destination, red_zones)
+        if guidance:
+            try:
+                for route in fetch_osrm_routes(
+                    [origin, *guidance, destination],
+                    alternatives=False,
+                    excludes=excludes,
+                ):
+                    score, hits = score_road_route(route, red_zones, exempt_points=exempt_points)
+                    candidates.append({
+                        **route,
+                        "score": score,
+                        "hit_zones": hits,
+                        "waypoints": guidance,
+                        "astar_guided": True,
+                    })
+            except Exception:
+                pass
 
     for zone in hit_zones:
         for waypoint in candidate_waypoints_for_zone(zone, padding=0.012):
@@ -634,12 +677,20 @@ def calculate_road_network_route(origin, destination, red_zones, stops=None, avo
         "duration": duration,
         "waypoints": best["waypoints"],
         "route_steps": best.get("steps", []),
-        "route_model": "osrm_road_network_exclusions" if excluded_classes else "osrm_road_network_manhattan_penalty",
+        "route_model": (
+            "osrm_road_network_exclusions"
+            if excluded_classes
+            else "astar_manhattan_guided_osrm"
+        ),
         "optimization": {
+            "algorithm": "A* + road-network map matching",
+            "cost_function": "f(n) = g(n) + h(n)",
+            "heuristic": "manhattan_distance",
             "models": [
-                "osrm_road_graph",
+                "astar",
                 "manhattan_heuristic",
-                "red_zone_penalty",
+                "osrm_road_graph",
+                "red_zone_5km_buffer",
                 "alternative_selection",
             ] + (["osrm_exclude_classes"] if excluded_classes else []),
             "traffic_factor": traffic_factor,
