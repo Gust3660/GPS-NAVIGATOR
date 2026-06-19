@@ -1,15 +1,6 @@
 import { Bookmark, Clock3, Fuel, List, Navigation, Route, ShieldAlert, Ticket, Zap } from 'lucide-react';
 import { cx, softButtonClass } from '../ui/classes.js';
 
-const riskBands = [
-  'bg-emerald-400',
-  'bg-lime-400',
-  'bg-yellow-400',
-  'bg-orange-400',
-  'bg-red-400',
-  'bg-red-600'
-];
-
 function MetricTile({ icon: Icon, label, value, tone = 'emerald' }) {
   const toneClass = tone === 'amber'
     ? 'bg-amber-400/12 text-amber-500 ring-amber-400/25 dark:text-yellow-300'
@@ -28,7 +19,7 @@ function MetricTile({ icon: Icon, label, value, tone = 'emerald' }) {
 
 function LegendItem({ color, label }) {
   return (
-    <span className="inline-flex min-w-0 items-center gap-1.5 rounded-full bg-slate-100/80 px-2.5 py-1 text-[11px] font-bold text-slate-600 dark:bg-white/8 dark:text-slate-300">
+    <span className="inline-flex min-w-0 items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[11px] font-black text-slate-700 shadow-sm ring-1 ring-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:ring-white/10">
       <b className={cx('size-2.5 shrink-0 rounded-full', color)} />
       <span className="truncate">{label}</span>
     </span>
@@ -134,13 +125,15 @@ export default function SummarySheet({
             <strong className="text-2xl font-black text-emerald-500">{riskValue}/100</strong>
           </div>
 
-          <div className="relative my-4">
-            <div className="grid grid-cols-6 gap-1.5">
-              {riskBands.map((band) => <i key={band} className={cx('h-2 rounded-full', band)} />)}
-            </div>
+          <div className="relative my-4 h-5">
+            <div className="absolute left-0 right-0 top-1/2 h-2 -translate-y-1/2 overflow-hidden rounded-full bg-gradient-to-r from-emerald-400 via-yellow-400 via-orange-400 to-red-600 shadow-inner" />
+            <div
+              className="absolute left-0 top-1/2 h-2 -translate-y-1/2 rounded-full bg-emerald-500/35"
+              style={{ width: `${riskValue}%` }}
+            />
             <span
-              className="absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-slate-950 shadow-md dark:bg-white"
-              style={{ left: `${riskValue}%` }}
+              className="absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-slate-950 shadow-lg ring-2 ring-slate-950/10 transition-[left] duration-500 dark:bg-white dark:ring-white/10"
+              style={{ left: `calc(${riskValue}% * 0.98 + 1%)` }}
             />
           </div>
 
