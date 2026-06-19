@@ -16,7 +16,7 @@ function MetricTile({ icon: Icon, label, value, tone = 'emerald' }) {
     : 'bg-emerald-400/12 text-emerald-500 ring-emerald-400/25 dark:text-emerald-300';
 
   return (
-    <div className="min-w-0 rounded-2xl border border-slate-200/80 bg-white/78 p-4 shadow-sm ring-1 ring-white/70 backdrop-blur dark:border-white/10 dark:bg-slate-900/58 dark:ring-white/10">
+    <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm ring-1 ring-white dark:border-white/10 dark:bg-slate-900 dark:ring-white/10">
       <div className={cx('mb-3 grid size-10 place-items-center rounded-2xl ring-1', toneClass)}>
         <Icon size={21} strokeWidth={2.3} />
       </div>
@@ -75,7 +75,7 @@ export default function SummarySheet({
   return (
     <section
       className={cx(
-        'fixed bottom-0 left-1/2 z-30 max-h-[78vh] w-[min(1040px,calc(100vw-140px))] -translate-x-1/2 overflow-auto rounded-t-[24px] border border-b-0 border-white/70 bg-slate-50/94 p-5 text-slate-950 shadow-uber backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/92 dark:text-slate-50 max-[780px]:w-[calc(100vw-1rem)] max-[780px]:p-4',
+        'fixed bottom-0 left-1/2 z-30 max-h-[78vh] w-[min(1040px,calc(100vw-140px))] -translate-x-1/2 overflow-auto rounded-t-[24px] border border-b-0 border-white bg-slate-50 p-5 text-slate-950 shadow-uber dark:border-white/10 dark:bg-slate-950 dark:text-slate-50 max-[780px]:w-[calc(100vw-1rem)] max-[780px]:p-4',
         dragging ? 'select-none' : ''
       )}
       style={{ transform: `translate(-50%, ${-offset}px)` }}
@@ -92,7 +92,7 @@ export default function SummarySheet({
           <span className="text-xs font-black uppercase tracking-[0.14em] text-emerald-600 dark:text-yellow-300">Ruta lista</span>
           <h2 className="mt-1 text-2xl font-black leading-tight">Resumen de la ruta</h2>
         </div>
-        <div className="rounded-full border border-slate-200 bg-white/80 px-3 py-1.5 text-xs font-black text-slate-600 shadow-sm dark:border-white/10 dark:bg-white/8 dark:text-slate-300">
+        <div className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-black text-slate-600 shadow-sm dark:border-white/10 dark:bg-slate-900 dark:text-slate-300">
           Riesgo {riskLabel}
         </div>
       </div>
@@ -109,7 +109,7 @@ export default function SummarySheet({
       </div>
 
       <div className="mt-4 grid grid-cols-[1fr_1.15fr] gap-3 max-[860px]:grid-cols-1">
-        <div className="rounded-2xl border border-slate-200/80 bg-white/78 p-4 shadow-sm dark:border-white/10 dark:bg-slate-900/58">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-slate-900">
           <div className="mb-3 flex items-start justify-between gap-4">
             <div>
               <p className="text-sm font-black">{tollUnavailable ? 'Costo real no disponible' : 'Casetas verificadas por INEGI Sakbe'}</p>
@@ -120,7 +120,7 @@ export default function SummarySheet({
           <button type="button" className={cx(softButtonClass, 'w-full rounded-xl')} onClick={onOpenTollDetail}>Ver detalle</button>
         </div>
 
-        <div className="rounded-2xl border border-slate-200/80 bg-white/78 p-4 shadow-sm dark:border-white/10 dark:bg-slate-900/58">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-slate-900">
           <div className="mb-3 flex items-center justify-between gap-4">
             <div className="flex min-w-0 items-center gap-3">
               <div className="grid size-10 shrink-0 place-items-center rounded-2xl bg-red-400/12 text-red-500 ring-1 ring-red-400/25">
