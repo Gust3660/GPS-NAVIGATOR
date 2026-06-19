@@ -9,6 +9,13 @@ import polyline
 
 SAKBE_BASE_URL = "https://gaia.inegi.org.mx/sakbe_v3.1"
 DEFAULT_SAKBE_KEY = "kqvCNH1V-keUF-rSVa-O1tf-gdqFN6DynMNN"
+SAKBE_VEHICLE_CODES = {
+    "auto": 1,
+    "suv": 1,
+    "electrico": 1,
+    "camioneta": 2,
+    "trailer 3 ejes": 5,
+}
 
 
 class InegiRoutingError(RuntimeError):
@@ -17,6 +24,11 @@ class InegiRoutingError(RuntimeError):
 
 def _sakbe_key():
     return os.getenv("INEGI_RUTEO_KEY") or os.getenv("SAKBE_API_KEY") or DEFAULT_SAKBE_KEY
+
+
+def sakbe_vehicle_code(vehicle_type="Auto"):
+    normalized = str(vehicle_type or "Auto").strip().lower()
+    return SAKBE_VEHICLE_CODES.get(normalized, 1)
 
 
 def _post_json(endpoint, payload, timeout=12):
@@ -98,7 +110,7 @@ def _geojson_to_polyline(geojson_value):
     return polyline.encode(lat_lng_points), lng_lat_points
 
 
-def _route_segment_with_inegi(origin, destination, avoid_tolls=False, avoid_highways=False):
+def _route_segment_with_inegi(origin, destination, avoid_tolls=False, avoid_highways=False, vehicle_type="Auto"):
     origin_line = _nearest_line(origin[0], origin[1])
     destination_line = _nearest_line(destination[0], destination[1])
     endpoint = "libre" if (avoid_tolls or avoid_highways) else "optima"
@@ -118,7 +130,7 @@ def _route_segment_with_inegi(origin, destination, avoid_tolls=False, avoid_high
         "id_f": destination_line["id"],
         "source_f": destination_line["source"],
         "target_f": destination_line["target"],
-        "v": 1,
+        "v": sakbe_vehicle_code(vehicle_type),
         "e": 0,
     }
 
@@ -136,6 +148,8 @@ def _route_segment_with_inegi(origin, destination, avoid_tolls=False, avoid_high
         "toll_cost": 0 if avoid_tolls else toll_cost,
         "toll_source": "inegi_sakbe",
         "toll_corridors": [] if avoid_tolls else [origin_line["name"], destination_line["name"]],
+        "toll_vehicle_type": vehicle_type,
+        "toll_vehicle_code": sakbe_vehicle_code(vehicle_type),
         "warning": data.get("advertencia"),
         "engine": f"inegi_sakbe_{endpoint}",
         "optimization": {
@@ -146,7 +160,7 @@ def _route_segment_with_inegi(origin, destination, avoid_tolls=False, avoid_high
     }
 
 
-def route_with_inegi(origin, destination, stops=None, avoid_tolls=False, avoid_highways=False):
+def route_with_inegi(origin, destination, stops=None, avoid_tolls=False, avoid_highways=False, vehicle_type="Auto"):
     points = [origin, *(stops or []), destination]
     if len(points) < 2:
         raise InegiRoutingError("Ruta incompleta")
@@ -157,6 +171,7 @@ def route_with_inegi(origin, destination, stops=None, avoid_tolls=False, avoid_h
             nxt,
             avoid_tolls=avoid_tolls,
             avoid_highways=avoid_highways,
+            vehicle_type=vehicle_type,
         )
         for current, nxt in zip(points, points[1:])
     ]
@@ -190,6 +205,8 @@ def route_with_inegi(origin, destination, stops=None, avoid_tolls=False, avoid_h
         "toll_cost": 0 if avoid_tolls else toll_cost,
         "toll_source": "inegi_sakbe",
         "toll_corridors": [] if avoid_tolls else list(dict.fromkeys(toll_corridors)),
+        "toll_vehicle_type": vehicle_type,
+        "toll_vehicle_code": sakbe_vehicle_code(vehicle_type),
         "warning": "; ".join(warnings) if warnings else None,
         "engine": "inegi_sakbe_multistop_libre" if (avoid_tolls or avoid_highways) else "inegi_sakbe_multistop_optima",
         "optimization": {

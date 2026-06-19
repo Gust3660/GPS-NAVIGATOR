@@ -35,6 +35,10 @@ export default function TollDetailDrawer({ tollCost, routeResult, routeForm, onC
           <strong className="block">{sourceLabel}</strong>
         </div>
         <div className={panelCardClass}>
+          <span className={labelTextClass}>Vehiculo para casetas</span>
+          <strong className="block">{routeResult?.toll_vehicle_type || 'Auto'}</strong>
+        </div>
+        <div className={panelCardClass}>
           <span className={labelTextClass}>Preferencia de ruta</span>
           <strong className="block">{routeForm.avoid_tolls ? 'Evitando peajes' : 'Ruta con peajes permitidos'}</strong>
         </div>

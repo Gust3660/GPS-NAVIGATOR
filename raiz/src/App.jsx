@@ -247,18 +247,26 @@ export default function App() {
   });
 
   const updateVehicleConfig = (key, value) => {
-    setVehicleConfig((prev) => ({
-      ...prev,
+    const nextVehicleConfig = {
+      ...vehicleConfig,
       [key]: value,
       ...(key === 'vehicle' && value === 'Electrico' ? { fuel: 'Electrico' } : {}),
-      ...(key === 'vehicle' && value !== 'Electrico' && prev.fuel === 'Electrico' ? { fuel: 'Gasolina' } : {})
-    }));
+      ...(key === 'vehicle' && value !== 'Electrico' && vehicleConfig.fuel === 'Electrico' ? { fuel: 'Gasolina' } : {})
+    };
+
+    setVehicleConfig(nextVehicleConfig);
+
+    if (key === 'vehicle' && hasRouteEndpoints(routeForm)) {
+      refreshRoute(routeForm, true, true, { vehicleConfigOverride: nextVehicleConfig })
+        .catch(() => notifyError('No se pudo recalcular casetas para ese vehiculo', 'vehicle-toll-recalc-error'));
+    }
+
     if (key === 'efficiency') {
       const kmPerLiter = Math.max(Number(value) || 1, 1);
       const nextForm = { ...routeForm, vehicle_consumption: String(100 / kmPerLiter) };
       setRouteForm(nextForm);
       if (hasRouteEndpoints(nextForm)) {
-        refreshRoute(nextForm, true).catch(() => notifyError('No se pudo recalcular consumo', 'fuel-recalc-error'));
+        refreshRoute(nextForm, true, true, { vehicleConfigOverride: nextVehicleConfig }).catch(() => notifyError('No se pudo recalcular consumo', 'fuel-recalc-error'));
       }
     }
   };

@@ -6,7 +6,7 @@ export function normalizeOriginName(originName) {
   return LEGACY_CURRENT_LOCATION_LABELS.has(originName) ? CURRENT_LOCATION_LABEL : originName;
 }
 
-export function buildPayload(form) {
+export function buildPayload(form, vehicleConfig = {}) {
   const stops = Array.isArray(form.stops)
     ? form.stops
         .map((stop) => ({
@@ -27,7 +27,8 @@ export function buildPayload(form) {
     fuel_price_per_liter: Number(form.fuel_price_per_liter),
     toll_cost_mxn: Number(form.toll_cost_mxn),
     avoid_tolls: form.avoid_tolls,
-    avoid_highways: form.avoid_highways
+    avoid_highways: form.avoid_highways,
+    vehicle_type: vehicleConfig.vehicle || 'Auto'
   };
 }
 

@@ -2,7 +2,7 @@ from typing import Any
 
 from core.red_zones import RED_ZONE_DATA, RED_ZONES
 from google_context import get_google_traffic_context
-from inegi_routing import route_with_inegi
+from inegi_routing import route_with_inegi, sakbe_vehicle_code
 from route_logic import (
     calculate_road_network_route,
     intersecting_red_zones,
@@ -49,6 +49,8 @@ def inegi_result_to_route(origin, destination, stops, inegi_result, traffic_cont
         "toll_cost": inegi_result.get("toll_cost"),
         "toll_source": inegi_result.get("toll_source"),
         "toll_corridors": inegi_result.get("toll_corridors", []),
+        "toll_vehicle_type": inegi_result.get("toll_vehicle_type"),
+        "toll_vehicle_code": inegi_result.get("toll_vehicle_code"),
         "warning": inegi_result.get("warning"),
         "route_steps": [
             {
@@ -90,11 +92,14 @@ def get_toll_quote(origin, destination, req: RouteRequest):
             stops=[(stop.lat, stop.lng) for stop in req.stops],
             avoid_tolls=req.avoid_tolls,
             avoid_highways=req.avoid_highways,
+            vehicle_type=req.vehicle_type,
         )
         return {
             "cost_mxn": float(inegi_result.get("toll_cost") or 0),
             "source": "inegi_sakbe",
             "matched_corridors": inegi_result.get("toll_corridors", []),
+            "vehicle_type": inegi_result.get("toll_vehicle_type", req.vehicle_type),
+            "vehicle_code": inegi_result.get("toll_vehicle_code", sakbe_vehicle_code(req.vehicle_type)),
             "auto": False,
             "verified": True,
             "warning": inegi_result.get("warning"),
@@ -137,6 +142,7 @@ def calculate_route_response(req: RouteRequest):
                 stops=stops,
                 avoid_tolls=req.avoid_tolls,
                 avoid_highways=req.avoid_highways,
+                vehicle_type=req.vehicle_type,
             )
             result = inegi_result_to_route(origin, destination, stops, inegi_result, traffic_context)
             result["fallback_reason"] = f"OSRM no disponible: {osrm_exc}"
@@ -164,6 +170,8 @@ def calculate_route_response(req: RouteRequest):
         toll_corridors = [] if req.avoid_tolls else result.get("toll_corridors", [])
         toll_auto = False
         toll_verified = toll_source == "inegi_sakbe"
+        toll_vehicle_type = result.get("toll_vehicle_type", req.vehicle_type)
+        toll_vehicle_code = result.get("toll_vehicle_code", sakbe_vehicle_code(req.vehicle_type))
         toll_warning = result.get("warning")
     else:
         toll_quote = get_toll_quote(origin, destination, req)
@@ -172,6 +180,8 @@ def calculate_route_response(req: RouteRequest):
         toll_corridors = toll_quote["matched_corridors"]
         toll_auto = toll_quote["auto"]
         toll_verified = toll_quote["verified"]
+        toll_vehicle_type = toll_quote.get("vehicle_type", req.vehicle_type)
+        toll_vehicle_code = toll_quote.get("vehicle_code", sakbe_vehicle_code(req.vehicle_type))
         toll_warning = toll_quote.get("warning")
 
     total_cost = fuel_cost + (toll_cost or 0)
@@ -193,6 +203,8 @@ def calculate_route_response(req: RouteRequest):
         "toll_cost_auto": toll_auto,
         "toll_cost_verified": toll_verified,
         "toll_corridors": toll_corridors,
+        "toll_vehicle_type": toll_vehicle_type,
+        "toll_vehicle_code": toll_vehicle_code,
         "toll_warning": toll_warning,
         "fuel_consumption_liters": round(fuel_used, 2),
         "fuel_cost_mxn": round(fuel_cost, 2),

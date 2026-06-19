@@ -29,6 +29,7 @@ class RouteRequest(BaseModel):
     toll_cost_mxn: float = 0.0
     avoid_tolls: bool = False
     avoid_highways: bool = False
+    vehicle_type: str = "Auto"
 
 
 class GeocodeQuery(BaseModel):

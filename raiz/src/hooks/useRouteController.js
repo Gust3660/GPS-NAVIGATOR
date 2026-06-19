@@ -15,7 +15,8 @@ function getRouteRequestKey(payload) {
     fuel_price_per_liter: payload.fuel_price_per_liter,
     toll_cost_mxn: payload.toll_cost_mxn,
     avoid_tolls: Boolean(payload.avoid_tolls),
-    avoid_highways: Boolean(payload.avoid_highways)
+    avoid_highways: Boolean(payload.avoid_highways),
+    vehicle_type: payload.vehicle_type
   });
 }
 
@@ -73,7 +74,7 @@ export function useRouteController({
       throw new Error('Selecciona un destino para calcular la ruta');
     }
 
-    const payload = buildPayload(form);
+    const payload = buildPayload(form, options.vehicleConfigOverride || vehicleConfig);
     const requestKey = getRouteRequestKey(payload);
 
     if (activeRouteKeyRef.current && activeRouteKeyRef.current !== requestKey) {
@@ -108,7 +109,7 @@ export function useRouteController({
         activeRouteAbortRef.current = null;
       }
     }
-  }, [rememberRecentRoute, routeForm, setRouteResult]);
+  }, [rememberRecentRoute, routeForm, setRouteResult, vehicleConfig]);
 
   return {
     rememberRecentRoute,
